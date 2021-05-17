@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.advertiser.AdvertiserFragment">
+
+    <LinearLayout
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/advertiser__progress_bar__running"
+            android:layout_width="150sp"
+            android:layout_height="250sp"
+            android:layout_weight="1"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:progress="80"
+            android:progressDrawable="@drawable/spinning_progress"
+            android:indeterminate="true"
+            android:gravity="center"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/advertiser__switch_compat__running"
+            android:layout_width="150sp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:checked="false"
+            android:text="Advertise"
+            android:gravity="center"
+            />
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
