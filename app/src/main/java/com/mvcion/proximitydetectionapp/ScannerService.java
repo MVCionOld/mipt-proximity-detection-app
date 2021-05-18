@@ -12,10 +12,12 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.mvcion.proximitydetectionapp.common.PreferencesFacade;
 import com.mvcion.proximitydetectionapp.common.ServiceUuis;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -84,7 +86,6 @@ public class ScannerService extends Service {
             String[] reports = new String[nearbyDevices.size()];
             int i = 0;
             for (Map.Entry<String, LinkedList<ScanResult>> entry: nearbyDevices.entrySet()) {
-                entry.getValue().get(0).describeContents();
                 int minRssi = Integer.MAX_VALUE;
                 int maxRssi = Integer.MIN_VALUE;
                 double avgRssi = 0;
@@ -146,19 +147,97 @@ public class ScannerService extends Service {
         public void run() {
             while (true) {
                 consumeScanResults();
-//                updateLeScannerUi(scannerIteration++, nearbyDevices.size(),
-//                        uniqueLeDevices.size(), getProximityReport());
+
+                ArrayList<String> proximityReport = new ArrayList<>();
+                Collections.addAll(proximityReport, getProximityReport());
+
+                Intent proximityReportIntent = new Intent("ScannerService");
+                proximityReportIntent
+                        .putExtra("devicesNearbyNum", nearbyDevices.size())
+                        .putExtra("scannerIteration", ++scannerIteration)
+                        .putExtra("allUniqueDevicesNum", uniqueLeDevices.size())
+                        .putStringArrayListExtra("proximityReport", proximityReport);
+
+                Log.d(TAG, MessageFormat.format("Scanner iteration: {0}", scannerIteration));
+                Log.d(TAG, MessageFormat.format("Nearby devices number: {0}", nearbyDevices.size()));
+                Log.d(TAG, MessageFormat.format("All scanned devices: {0}", uniqueLeDevices.size()));
+
+                sendBroadcast(proximityReportIntent);
             }
         }
     });
 
 
     public ScannerService() {
+        Log.d(TAG, "constructor");
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.d(TAG, "onCreate");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand");
+
+        processingWindowNanos = intent.getLongExtra(
+                "processingWindowNanos", PreferencesFacade.DEFAULT_SCANNER_PROCESSING_WINDOW_NANOS_VALUE);
+        reportDelayMillis = intent.getLongExtra(
+                "reportDelayMillis", PreferencesFacade.DEFAULT_SCANNER_REPORT_DELAY_MILLIS);
+        scannerMode = intent.getIntExtra(
+                "scannerMode", PreferencesFacade.DEFAULT_SCANNER_MODE_VALUE);
+        callbackType = intent.getIntExtra(
+                "callbackType", PreferencesFacade.DEFAULT_CALLBACK_TYPE_VALUE);
+        matchMode = intent.getIntExtra(
+                "matchMode", PreferencesFacade.DEFAULT_MATCH_MODE_VALUE);
+        numOfMatches = intent.getIntExtra(
+                "numOfMatches", PreferencesFacade.DEFAULT_NUM_OF_MATCHES_VALUE);
+
+        if (bluetoothAdapter == null) {
+            Log.e(TAG, "BluetoothAdapter is not found.");
+        } else {
+            if (!bluetoothAdapter.isEnabled()) {
+                Log.v(TAG, "Enabling Bluetooth Adapter.");
+                bluetoothAdapter.enable();
+            }
+
+            bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+
+            if (bluetoothLeScanner != null) {
+                Log.v(TAG, "Scanner is found.");
+                scanResultsProducer.start();
+                scanResultsConsumer.start();
+            } else {
+                Log.e(TAG, "Scanner is not found.");
+            }
+        }
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d(TAG, "onUnbind");
+        return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Log.d(TAG, "onRebind");
+        super.onRebind(intent);
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        Log.d(TAG, "onBind");
+        return null;
     }
 }

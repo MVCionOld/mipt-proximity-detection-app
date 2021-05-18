@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.mvcion.proximitydetectionapp.AdvertiserService;
 import com.mvcion.proximitydetectionapp.common.PreferencesFacade;
+import com.mvcion.proximitydetectionapp.common.ServiceTools;
 import com.mvcion.proximitydetectionapp.databinding.FragmentAdvertiserBinding;
 
 public class AdvertiserFragment extends Fragment {
@@ -44,9 +45,16 @@ public class AdvertiserFragment extends Fragment {
         progressBar.setVisibility(View.INVISIBLE);
 
         SwitchCompat switchCompat = binding.advertiserSwitchCompatRunning;
+
+        if (ServiceTools.isServiceRunning(inflater.getContext(), AdvertiserService.class)) {
+            progressBar.setVisibility(View.VISIBLE);
+            switchCompat.setChecked(true);
+        }
+
         switchCompat.setOnCheckedChangeListener((view, isChecked) -> {
             if (isChecked) {
                 progressBar.setVisibility(View.VISIBLE);
+                fetchAdvertiserPreferences(inflater.getContext());
                 requireActivity()
                         .startService(
                                 new Intent(getActivity(), AdvertiserService.class)

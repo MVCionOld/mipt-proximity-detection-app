@@ -6,17 +6,88 @@
     android:layout_height="match_parent"
     tools:context=".ui.scanner.ScannerFragment">
 
-    <TextView
-        android:id="@+id/text_scanner"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/scanner__switch_compat__running"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:checked="false"
+                android:text="@string/scanner"
+                android:gravity="center"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/scanner__text_view__scanner_iteration"
+                    android:text="Scanner iteration: 0"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/scanner__text_view__unique_devices"
+                    android:text="Unique devices total: 0"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/scanner__text_view__update_frequency"
+                    android:text="Update frequency: -"
+                    />
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <ProgressBar
+                    android:id="@+id/scanner__progress_bar__running"
+                    android:layout_width="300sp"
+                    android:layout_height="300sp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/spinning_progress"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/zero"
+                    android:id="@+id/scanner__text_view__nearby_devices_counter"
+                    android:textSize="120sp"
+                    />
+            </FrameLayout>
+
+            <ListView android:id="@+id/proximity_detection__list_view"
+                android:layout_width="match_parent"
+                android:drawSelectorOnTop="true"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
