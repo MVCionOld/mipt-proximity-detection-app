@@ -7,7 +7,9 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
@@ -15,9 +17,10 @@ import android.util.Log;
 import com.mvcion.proximitydetectionapp.common.PreferencesFacade;
 import com.mvcion.proximitydetectionapp.common.ServiceUuis;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -31,6 +34,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ScannerService extends Service {
     private static final String TAG = "ScannerService";
+
+    boolean smsBounded = false;
+    ServiceConnection smsConnection;
+    Intent smsIntent;
+    StorageManagerService.StorageManagerBinder smsBinder;
 
     private long processingWindowNanos;
     private long reportDelayMillis;
@@ -81,51 +89,13 @@ public class ScannerService extends Service {
         private int scannerIteration = 0;
         private Set<String> uniqueLeDevices = new HashSet<>();
         private volatile Map<String, LinkedList<ScanResult>> nearbyDevices = new ConcurrentHashMap<>();
-
-        private String[] getProximityReport() {
-            String[] reports = new String[nearbyDevices.size()];
-            int i = 0;
-            for (Map.Entry<String, LinkedList<ScanResult>> entry: nearbyDevices.entrySet()) {
-                int minRssi = Integer.MAX_VALUE;
-                int maxRssi = Integer.MIN_VALUE;
-                double avgRssi = 0;
-                int minTxPower = Integer.MAX_VALUE;
-                int maxTxPower = Integer.MIN_VALUE;
-                double avgTxPower = 0;
-                int counter = entry.getValue().size();
-                for (ScanResult scanResult: entry.getValue()) {
-                    minRssi = Math.min(minRssi, scanResult.getRssi());
-                    maxRssi = Math.max(maxRssi, scanResult.getRssi());
-                    avgRssi += scanResult.getRssi();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && scanResult.getTxPower() != ScanResult.TX_POWER_NOT_PRESENT) {
-                        minTxPower = Math.min(minTxPower, scanResult.getTxPower());
-                        maxTxPower = Math.max(maxTxPower, scanResult.getTxPower());
-                        avgTxPower += scanResult.getTxPower();
-                    }
-                }
-                avgRssi /= counter;
-                avgTxPower /= counter;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    reports[i++] = MessageFormat.format(
-                            "{0}\nmin RSSI: {1}\nmax RSSI: {2}\navg RSSI: {3}"
-                                    + "\nmin Tx power: {4}\nmax Tx power: {5}\navg Tx power: {6}"
-                                    + "\ncounter: {7}",
-                            entry.getKey(), minRssi, maxRssi, avgRssi,
-                            minTxPower, maxTxPower, avgTxPower,
-                            counter);
-                } else {
-                    reports[i++] = MessageFormat.format(
-                            "{0}\nmin RSSI: {1}\nmax RSSI: {2}\navgRssi: {3}\ncounter: {4}",
-                            entry.getKey(), minRssi, maxRssi, avgRssi, counter);
-                }
-            }
-            return reports;
-        }
+        private ArrayList<ProximityDetectionScanResult> proximityResults = new ArrayList<>();
 
         private void consumeScanResults() {
             if (nearbyDevices != null) {
                 uniqueLeDevices.addAll(nearbyDevices.keySet());
             }
+            proximityResults = new ArrayList<>();
             nearbyDevices = new ConcurrentHashMap<>();
             final long startTime = System.nanoTime();
             long currTime = System.nanoTime();
@@ -143,13 +113,32 @@ public class ScannerService extends Service {
             }
         }
 
+        private ArrayList<String> getProximityReport() {
+            ArrayList<String> reports = new ArrayList<>(nearbyDevices.size());
+            int i = 0;
+            for (Map.Entry<String, LinkedList<ScanResult>> entry: nearbyDevices.entrySet()) {
+                ProximityDetectionScanResult result = new ProximityDetectionScanResult(
+                        entry.getKey(),
+                        entry.getValue()
+                );
+                proximityResults.add(result);
+                reports.add(result.toString());
+            }
+            return reports;
+        }
+
+        private void storeProximityResults() {
+            new Thread(() -> {
+                // use StorageManagerService and its bindings
+            });
+        }
+
         @Override
         public void run() {
             while (true) {
                 consumeScanResults();
 
-                ArrayList<String> proximityReport = new ArrayList<>();
-                Collections.addAll(proximityReport, getProximityReport());
+                ArrayList<String> proximityReport = getProximityReport();
 
                 Intent proximityReportIntent = new Intent("ScannerService");
                 proximityReportIntent
@@ -158,11 +147,9 @@ public class ScannerService extends Service {
                         .putExtra("allUniqueDevicesNum", uniqueLeDevices.size())
                         .putStringArrayListExtra("proximityReport", proximityReport);
 
-                Log.d(TAG, MessageFormat.format("Scanner iteration: {0}", scannerIteration));
-                Log.d(TAG, MessageFormat.format("Nearby devices number: {0}", nearbyDevices.size()));
-                Log.d(TAG, MessageFormat.format("All scanned devices: {0}", uniqueLeDevices.size()));
-
                 sendBroadcast(proximityReportIntent);
+
+                storeProximityResults();
             }
         }
     });
@@ -176,6 +163,24 @@ public class ScannerService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
+
+        smsIntent = new Intent(StorageManagerService.class.toString());
+        smsConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.d(TAG, "StorageManagerService onServiceConnected");
+                smsBounded = true;
+                smsBinder = (StorageManagerService.StorageManagerBinder) service;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                Log.d(TAG, "StorageManagerService onServiceDisconnected");
+                smsBounded = false;
+            }
+        };
+
+        bindService(smsIntent, smsConnection, BIND_AUTO_CREATE);
     }
 
     @Override
@@ -240,4 +245,59 @@ public class ScannerService extends Service {
         Log.d(TAG, "onBind");
         return null;
     }
+
+    static class ProximityDetectionScanResult {
+
+        private final String label;
+        private int minRssi;
+        private int maxRssi;
+        private double avgRssi;
+        private int minTxPower;
+        private int maxTxPower;
+        private double avgTxPower;
+        private final int counter;
+
+        ProximityDetectionScanResult(String label, LinkedList<ScanResult> scanResults) {
+            this.label = label;
+            minRssi = Integer.MAX_VALUE;
+            maxRssi = Integer.MIN_VALUE;
+            avgRssi = 0;
+            minTxPower = Integer.MAX_VALUE;
+            maxTxPower = Integer.MIN_VALUE;
+            avgTxPower = 0;
+            counter = scanResults.size();
+            for (ScanResult scanResult: scanResults) {
+                minRssi = Math.min(minRssi, scanResult.getRssi());
+                maxRssi = Math.max(maxRssi, scanResult.getRssi());
+                avgRssi += scanResult.getRssi();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && scanResult.getTxPower() != ScanResult.TX_POWER_NOT_PRESENT) {
+                    minTxPower = Math.min(minTxPower, scanResult.getTxPower());
+                    maxTxPower = Math.max(maxTxPower, scanResult.getTxPower());
+                    avgTxPower += scanResult.getTxPower();
+                }
+            }
+            avgRssi /= counter;
+            avgTxPower /= counter;
+        }
+
+        @NotNull
+        @Override
+        public String toString() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                return MessageFormat.format(
+                        "{0}\nmin RSSI: {1}\nmax RSSI: {2}\navg RSSI: {3}"
+                                + "\nmin Tx power: {4}\nmax Tx power: {5}\navg Tx power: {6}"
+                                + "\ncounter: {7}",
+                        label, minRssi, maxRssi, avgRssi,
+                        minTxPower, maxTxPower, avgTxPower,
+                        counter);
+            } else {
+                return MessageFormat.format(
+                        "{0}\nmin RSSI: {1}\nmax RSSI: {2}\navgRssi: {3}\ncounter: {4}",
+                        label, minRssi, maxRssi, avgRssi, counter);
+            }
+        }
+    }
+
+
 }

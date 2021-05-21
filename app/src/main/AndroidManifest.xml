@@ -19,9 +19,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProximityDetectionApp">
         <service
+            android:name=".StorageManagerService"
+            android:enabled="true"
+            android:exported="true"></service>
+        <service
             android:name=".ScannerService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
         <service
             android:name=".AdvertiserService"
             android:enabled="true"
