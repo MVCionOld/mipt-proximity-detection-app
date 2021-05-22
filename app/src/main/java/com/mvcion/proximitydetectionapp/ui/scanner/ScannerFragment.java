@@ -19,10 +19,10 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.mvcion.proximitydetectionapp.services.ScannerService;
 import com.mvcion.proximitydetectionapp.common.preferences.PreferencesFacade;
 import com.mvcion.proximitydetectionapp.common.service.ServiceTools;
 import com.mvcion.proximitydetectionapp.databinding.FragmentScannerBinding;
+import com.mvcion.proximitydetectionapp.services.ScannerService;
 
 import java.text.MessageFormat;
 
@@ -53,7 +53,8 @@ public class ScannerFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ScannerViewModel scannerViewModel = new ViewModelProvider(this).get(ScannerViewModel.class);
+        ScannerViewModel scannerViewModel = new ViewModelProvider(this)
+                .get(ScannerViewModel.class);
 
         binding = FragmentScannerBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

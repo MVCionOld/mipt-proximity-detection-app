@@ -61,6 +61,12 @@ public class ScannerService extends Service {
                 Log.w(TAG, "Nullable ScanResult.");
             }
         }
+
+        @Override
+        public void onScanFailed(int errorCode) {
+            super.onScanFailed(errorCode);
+            Log.e(TAG, Integer.toString(errorCode));
+        }
     };
 
     private Thread proximityResultsDumper;
@@ -70,7 +76,8 @@ public class ScannerService extends Service {
             add(new ScanFilter
                     .Builder()
                     .setServiceUuid(ServiceUuis.getServiceUuid())
-                    .build());
+                    .build()
+            );
         }};
         ScanSettings scanSettings = new ScanSettings
                 .Builder()

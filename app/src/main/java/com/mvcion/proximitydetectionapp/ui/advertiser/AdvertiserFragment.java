@@ -34,7 +34,8 @@ public class AdvertiserFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        AdvertiserViewModel advertiserViewModel = new ViewModelProvider(this).get(AdvertiserViewModel.class);
+        AdvertiserViewModel advertiserViewModel = new ViewModelProvider(this)
+                .get(AdvertiserViewModel.class);
 
         binding = FragmentAdvertiserBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
