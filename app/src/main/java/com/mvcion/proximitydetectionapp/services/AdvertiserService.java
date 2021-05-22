@@ -87,11 +87,14 @@ public class AdvertiserService extends Service {
         Log.d(TAG, "onStartCommand");
 
         advertiserMode = intent.getIntExtra(
-                "advertiserMode", PreferencesFacade.DEFAULT_ADVERTISER_MODE_VALUE);
+                "advertiserMode", PreferencesFacade.DEFAULT_ADVERTISER_MODE_VALUE
+        );
         advertiserTxPower = intent.getIntExtra(
-                "advertiserTxPower", PreferencesFacade.DEFAULT_ADVERTISER_TX_POWER_VALUE);
+                "advertiserTxPower", PreferencesFacade.DEFAULT_ADVERTISER_TX_POWER_VALUE
+        );
         isConnectable = intent.getBooleanExtra(
-                "isConnectable", PreferencesFacade.DEFAULT_ADVERTISER_IS_CONNECTABLE_VALUE);
+                "isConnectable", PreferencesFacade.DEFAULT_ADVERTISER_IS_CONNECTABLE_VALUE
+        );
 
         if (bluetoothAdapter == null) {
             Log.e(TAG, "BluetoothAdapter is not found.");
@@ -108,8 +111,18 @@ public class AdvertiserService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         Log.d(TAG, "onDestroy");
+        if (scanAdvertiser != null) {
+            try {
+                scanAdvertiser.join();
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+            }
+        }
+        if (bluetoothLeAdvertiser != null) {
+            bluetoothLeAdvertiser.stopAdvertising(leAdvertiseCallback);
+        }
+        super.onDestroy();
     }
 
     @Override

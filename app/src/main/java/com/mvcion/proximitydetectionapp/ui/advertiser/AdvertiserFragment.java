@@ -62,7 +62,12 @@ public class AdvertiserFragment extends Fragment {
                         );
             } else {
                 requireActivity()
-                        .stopService(new Intent(getActivity(), AdvertiserService.class));
+                        .stopService(
+                                new Intent(
+                                        getActivity(),
+                                        AdvertiserService.class
+                                )
+                        );
                 progressBar.setVisibility(View.INVISIBLE);
             }
         });

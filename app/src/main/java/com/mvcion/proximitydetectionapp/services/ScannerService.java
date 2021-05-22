@@ -63,6 +63,8 @@ public class ScannerService extends Service {
         }
     };
 
+    private Thread proximityResultsDumper;
+
     private Thread scanResultsProducer = new Thread(() -> {
         List<ScanFilter> scanFilters = new ArrayList<ScanFilter>(){{
             add(new ScanFilter
@@ -128,8 +130,6 @@ public class ScannerService extends Service {
                     .getService()
                     .putProximityResults(proximityResults));
         }
-
-        Thread proximityResultsDumper;
 
         @Override
         public void run() {
@@ -243,8 +243,46 @@ public class ScannerService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         Log.d(TAG, "onDestroy");
+
+        if (scanResultsProducer != null) {
+            if (scanResultsProducer.isAlive()) {
+                scanResultsProducer.interrupt();
+            }
+            try {
+                scanResultsProducer.join();
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+            }
+        }
+
+        if (scanResultsConsumer != null) {
+            if (scanResultsConsumer.isAlive()) {
+                scanResultsConsumer.interrupt();
+            }
+            try {
+                scanResultsConsumer.join();
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+            }
+        }
+
+        if (proximityResultsDumper != null) {
+            if (proximityResultsDumper.isAlive()) {
+                proximityResultsDumper.interrupt();
+            }
+            try {
+                proximityResultsDumper.join();
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+            }
+        }
+
+        if (bluetoothLeScanner != null) {
+            bluetoothLeScanner.stopScan(leScanCallback);
+        }
+
+        super.onDestroy();
     }
 
     @Override

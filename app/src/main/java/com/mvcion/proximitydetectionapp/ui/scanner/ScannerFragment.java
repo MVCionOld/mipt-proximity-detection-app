@@ -40,6 +40,7 @@ public class ScannerFragment extends Fragment {
     private int numOfMatches;
 
     private FragmentScannerBinding binding;
+    private BroadcastReceiver receiver;
 
     private void fetchScannerPreferences(Context context) {
         processingWindowNanos = PreferencesFacade.getProcessingWindowNanos(context);
@@ -68,7 +69,7 @@ public class ScannerFragment extends Fragment {
         }
 
         IntentFilter intentFilter = new IntentFilter("ScannerService");
-        BroadcastReceiver receiver = new BroadcastReceiver() {
+        receiver = new BroadcastReceiver() {
             @SuppressLint("DefaultLocale")
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -136,7 +137,10 @@ public class ScannerFragment extends Fragment {
 
                 requireActivity()
                         .stopService(
-                                new Intent(getActivity(), ScannerService.class)
+                                new Intent(
+                                        getActivity(),
+                                        ScannerService.class
+                                )
                         );
 
                 TextView nearbyDevicesCounterTextView = binding.scannerTextViewNearbyDevicesCounter;
@@ -169,6 +173,7 @@ public class ScannerFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        requireActivity().unregisterReceiver(receiver);
         super.onDestroyView();
         binding = null;
     }
