@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -32,10 +33,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class ScannerService extends Service {
     private static final String TAG = "ScannerService";
 
-    boolean smsBounded = false;
-    ServiceConnection smsConnection;
-    Intent smsIntent;
-    StorageManagerService.StorageManagerBinder smsBinder;
+    private int serviceId;
+    private boolean smsBounded = false;
+    private ServiceConnection smsConnection;
+    private Intent smsIntent;
+    private StorageManagerService.StorageManagerBinder smsBinder;
 
     private long processingWindowNanos;
     private long reportDelayMillis;
@@ -121,6 +123,7 @@ public class ScannerService extends Service {
             ArrayList<String> reports = new ArrayList<>(nearbyDevices.size());
             for (Map.Entry<String, LinkedList<ScanResult>> entry: nearbyDevices.entrySet()) {
                 ProximityDetectionScanResultDto result = new ProximityDetectionScanResultDto(
+                        serviceId,
                         entry.getKey(),
                         entry.getValue()
                 );
@@ -150,18 +153,18 @@ public class ScannerService extends Service {
                 consumeScanResults();
 
                 ArrayList<String> proximityReport = getProximityReport();
-
                 Intent proximityReportIntent = new Intent("ScannerService");
                 proximityReportIntent
                         .putExtra("devicesNearbyNum", nearbyDevices.size())
                         .putExtra("scannerIteration", ++scannerIteration)
                         .putExtra("allUniqueDevicesNum", uniqueLeDevices.size())
                         .putStringArrayListExtra("proximityReport", proximityReport);
-
                 sendBroadcast(proximityReportIntent);
 
-                proximityResultsDumper = getProximityResultsDumper();
-                proximityResultsDumper.start();
+                if (smsBounded) {
+                    proximityResultsDumper = getProximityResultsDumper();
+                    proximityResultsDumper.start();
+                }
             }
         }
     });
@@ -173,6 +176,7 @@ public class ScannerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        serviceId = new Random().nextInt();
         Log.d(TAG, "onCreate");
 
         smsIntent = new Intent(getApplicationContext(), StorageManagerService.class);

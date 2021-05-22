@@ -9,6 +9,13 @@ import com.mvcion.proximitydetectionapp.dto.ProximityDetectionScanResultDto;
 public class ProximityDetectionScanResultDao {
     public static ProximityDetectionScanResultDto getDto(Cursor cursor) {
         ProximityDetectionScanResultDto result = new ProximityDetectionScanResultDto();
+        result.setServiceId(
+                cursor.getInt(
+                        cursor.getColumnIndex(
+                                DBHelper.SCANNED_RECORDS_FIELD_SERVICE_ID
+                        )
+                )
+        );
         result.setMac(
                 cursor.getString(
                         cursor.getColumnIndex(
@@ -86,7 +93,7 @@ public class ProximityDetectionScanResultDao {
         ContentValues contentValues = new ContentValues();
         contentValues.put(
                 DBHelper.SCANNED_RECORDS_FIELD_SERVICE_ID,
-                0
+                result.getServiceId()
         );
         contentValues.put(
                 DBHelper.SCANNED_RECORDS_FIELD_DEVICE_MAC,

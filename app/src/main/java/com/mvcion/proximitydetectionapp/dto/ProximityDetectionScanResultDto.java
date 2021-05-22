@@ -17,6 +17,7 @@ import lombok.Setter;
 @Setter
 public class ProximityDetectionScanResultDto {
 
+    private int serviceId;
     private String mac;
     private String name;
     private String processedDttm;
@@ -31,7 +32,8 @@ public class ProximityDetectionScanResultDto {
     public ProximityDetectionScanResultDto() {
     }
 
-    public ProximityDetectionScanResultDto(String mac, LinkedList<ScanResult> scanResults) {
+    public ProximityDetectionScanResultDto(int serviceId, String mac, LinkedList<ScanResult> scanResults) {
+        this.serviceId = serviceId;
         this.mac = mac;
         name = scanResults.get(0).getDevice().getName();
         processedDttm = String.format(
@@ -49,11 +51,12 @@ public class ProximityDetectionScanResultDto {
             minRssi = Math.min(minRssi, scanResult.getRssi());
             maxRssi = Math.max(maxRssi, scanResult.getRssi());
             avgRssi += scanResult.getRssi();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                    && scanResult.getTxPower() != ScanResult.TX_POWER_NOT_PRESENT) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 minTxPower = Math.min(minTxPower, scanResult.getTxPower());
                 maxTxPower = Math.max(maxTxPower, scanResult.getTxPower());
-                avgTxPower += scanResult.getTxPower();
+                if (scanResult.getTxPower() != ScanResult.TX_POWER_NOT_PRESENT) {
+                    avgTxPower += scanResult.getTxPower();
+                }
             }
         }
         avgRssi /= counter;
@@ -63,20 +66,20 @@ public class ProximityDetectionScanResultDto {
     @NotNull
     @Override
     public String toString() {
-        if (minTxPower != Integer.MAX_VALUE) {
+        if (minTxPower < 127) {
             return MessageFormat.format(
-                    "Device: {0}\nname: {9}\nprocessed datetime: {8}\nRSSI: {3} in [{1}; {2}]"
-                            + "TxPower: {6} in [{4}; {5}]\ncounter: {7}",
+                    "Device: {0}\nname: {9}\nservice id: {10}\nprocessed datetime: {8}"
+                    + "\nRSSI: {3} in [{1}; {2}]\nTxPower: {6} in [{4}; {5}]\ncounter: {7}",
                     mac, minRssi, maxRssi, avgRssi,
                     minTxPower, maxTxPower, avgTxPower,
-                    counter, processedDttm, name
+                    counter, processedDttm, name, serviceId
             );
         } else {
             return MessageFormat.format(
-                    "Device: {0}\nname: {6}\nprocessed datetime: {5}\nRSSI: {3} in [{1}; {2}]"
-                            + "\ncounter: {4}",
+                    "Device: {0}\nname: {6}\nservice id: {7}\nprocessed datetime: {5}"
+                    + "\nRSSI: {3} in [{1}; {2}]\ncounter: {4}",
                     mac, minRssi, maxRssi, avgRssi,
-                    counter, processedDttm, name
+                    counter, processedDttm, name, serviceId
             );
         }
     }
