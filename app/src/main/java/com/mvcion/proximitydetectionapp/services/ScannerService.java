@@ -97,8 +97,7 @@ public class ScannerService extends Service {
             proximityResults = new ArrayList<>();
             nearbyDevices = new ConcurrentHashMap<>();
             final long startTime = System.nanoTime();
-            long currTime = System.nanoTime();
-            while (currTime - startTime < processingWindowNanos) {
+            while (System.nanoTime() - startTime < processingWindowNanos && !Thread.currentThread().isInterrupted()) {
                 if (leDevicesStream.size() > 0) {
                     ScanResult scanResult = leDevicesStream.remove();
                     String deviceAddress = scanResult.getDevice().toString();
@@ -108,7 +107,6 @@ public class ScannerService extends Service {
                         nearbyDevices.put(deviceAddress, new LinkedList<>(Collections.singletonList(scanResult)));
                     }
                 }
-                currTime = System.nanoTime();
             }
         }
 
@@ -133,7 +131,7 @@ public class ScannerService extends Service {
 
         @Override
         public void run() {
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
 
                 if (proximityResultsDumper != null && proximityResultsDumper.isAlive()) {
                     try {
@@ -246,9 +244,7 @@ public class ScannerService extends Service {
         Log.d(TAG, "onDestroy");
 
         if (scanResultsProducer != null) {
-            if (scanResultsProducer.isAlive()) {
-                scanResultsProducer.interrupt();
-            }
+            scanResultsProducer.interrupt();
             try {
                 scanResultsProducer.join();
             } catch (InterruptedException exception) {
@@ -256,21 +252,7 @@ public class ScannerService extends Service {
             }
         }
 
-        if (scanResultsConsumer != null) {
-            if (scanResultsConsumer.isAlive()) {
-                scanResultsConsumer.interrupt();
-            }
-            try {
-                scanResultsConsumer.join();
-            } catch (InterruptedException exception) {
-                exception.printStackTrace();
-            }
-        }
-
         if (proximityResultsDumper != null) {
-            if (proximityResultsDumper.isAlive()) {
-                proximityResultsDumper.interrupt();
-            }
             try {
                 proximityResultsDumper.join();
             } catch (InterruptedException exception) {
@@ -280,6 +262,15 @@ public class ScannerService extends Service {
 
         if (bluetoothLeScanner != null) {
             bluetoothLeScanner.stopScan(leScanCallback);
+        }
+
+        if (scanResultsConsumer != null) {
+            scanResultsConsumer.interrupt();
+            try {
+                scanResultsConsumer.join();
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+            }
         }
 
         super.onDestroy();
