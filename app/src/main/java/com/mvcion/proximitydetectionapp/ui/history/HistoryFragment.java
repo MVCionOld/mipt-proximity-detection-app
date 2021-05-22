@@ -21,6 +21,7 @@ import com.mvcion.proximitydetectionapp.databinding.FragmentHistoryBinding;
 
 import java.text.MessageFormat;
 
+@SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
 public class HistoryFragment extends Fragment {
 
     private final String ROWS_COUNT_PATTERN = "Rows count: {0}";
