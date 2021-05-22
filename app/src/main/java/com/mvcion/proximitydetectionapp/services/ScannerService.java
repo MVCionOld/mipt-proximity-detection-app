@@ -166,7 +166,6 @@ public class ScannerService extends Service {
         }
     });
 
-
     public ScannerService() {
         Log.d(TAG, "constructor");
     }

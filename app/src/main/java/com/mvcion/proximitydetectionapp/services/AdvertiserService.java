@@ -56,6 +56,7 @@ public class AdvertiserService extends Service {
             AdvertiseData.Builder advertiseDataBuilder = new AdvertiseData
                     .Builder()
                     .addServiceUuid(serviceUuid)
+                    .setIncludeDeviceName(true)
                     .setIncludeTxPowerLevel(true);
 
             AdvertiseSettings.Builder advertiseSettingsBuilder = new AdvertiseSettings

@@ -16,6 +16,13 @@ public class ProximityDetectionScanResultDao {
                         )
                 )
         );
+        result.setName(
+                cursor.getString(
+                        cursor.getColumnIndex(
+                                DBHelper.SCANNED_RECORDS_FIELD_DEVICE_NAME
+                        )
+                )
+        );
         result.setProcessedDttm(
                 cursor.getString(
                         cursor.getColumnIndex(
@@ -87,7 +94,7 @@ public class ProximityDetectionScanResultDao {
         );
         contentValues.put(
                 DBHelper.SCANNED_RECORDS_FIELD_DEVICE_NAME,
-                result.getMac()
+                result.getName()
         );
         contentValues.put(
                 DBHelper.SCANNED_RECORDS_FIELD_PROCESSED_DTTM,

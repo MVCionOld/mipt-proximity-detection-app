@@ -18,6 +18,7 @@ import lombok.Setter;
 public class ProximityDetectionScanResultDto {
 
     private String mac;
+    private String name;
     private String processedDttm;
     private int minRssi;
     private int maxRssi;
@@ -32,6 +33,7 @@ public class ProximityDetectionScanResultDto {
 
     public ProximityDetectionScanResultDto(String mac, LinkedList<ScanResult> scanResults) {
         this.mac = mac;
+        name = scanResults.get(0).getDevice().getName();
         processedDttm = String.format(
                 "%tFT%<tRZ",
                 Calendar.getInstance(TimeZone.getTimeZone("GMT+3"))
@@ -61,20 +63,20 @@ public class ProximityDetectionScanResultDto {
     @NotNull
     @Override
     public String toString() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && avgTxPower != 0) {
+        if (minTxPower != Integer.MAX_VALUE) {
             return MessageFormat.format(
-                    "Device: {0}\nprocessed datetime: {8}\nRSSI: {3} in [{1}; {2}]"
+                    "Device: {0}\nname: {9}\nprocessed datetime: {8}\nRSSI: {3} in [{1}; {2}]"
                             + "TxPower: {6} in [{4}; {5}]\ncounter: {7}",
                     mac, minRssi, maxRssi, avgRssi,
                     minTxPower, maxTxPower, avgTxPower,
-                    counter, processedDttm
+                    counter, processedDttm, name
             );
         } else {
             return MessageFormat.format(
-                    "Device: {0}\nprocessed datetime: {5}\nRSSI: {3} in [{1}; {2}]"
+                    "Device: {0}\nname: {6}\nprocessed datetime: {5}\nRSSI: {3} in [{1}; {2}]"
                             + "\ncounter: {4}",
                     mac, minRssi, maxRssi, avgRssi,
-                    counter, processedDttm
+                    counter, processedDttm, name
             );
         }
     }
