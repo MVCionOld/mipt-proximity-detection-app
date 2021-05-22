@@ -18,7 +18,7 @@
             android:layout_marginEnd="8dp"
             android:textAlignment="center"
             android:textSize="20sp"
-            >
+            tools:ignore="UselessParent">
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/scanner__switch_compat__running"
@@ -29,7 +29,8 @@
                 android:text="@string/scanner"
                 android:gravity="center"
                 android:textSize="22sp"
-                />
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
