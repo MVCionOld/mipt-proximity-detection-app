@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -18,7 +19,11 @@ import com.mvcion.proximitydetectionapp.common.db.DBHelper;
 import com.mvcion.proximitydetectionapp.dao.ProximityDetectionScanResultDao;
 import com.mvcion.proximitydetectionapp.databinding.FragmentHistoryBinding;
 
+import java.text.MessageFormat;
+
 public class HistoryFragment extends Fragment {
+
+    private final String ROWS_COUNT_PATTERN = "Rows count: {0}";
 
     private FragmentHistoryBinding binding;
 
@@ -49,6 +54,11 @@ public class HistoryFragment extends Fragment {
             }
             cursor.close();
         }
+
+        TextView nearbyDevicesCounterTextView = binding.historyTextViewHistorySize;
+        nearbyDevicesCounterTextView.setText(MessageFormat.format(
+                ROWS_COUNT_PATTERN, proximityInfos.length
+        ));
 
         ListView devicesListView = binding.proximityDetectionHistoryListView;
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
