@@ -1,5 +1,6 @@
 package com.mvcion.proximitydetectionapp.ui.scanner;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +19,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.mvcion.proximitydetectionapp.ScannerService;
+import com.mvcion.proximitydetectionapp.services.ScannerService;
 import com.mvcion.proximitydetectionapp.common.preferences.PreferencesFacade;
 import com.mvcion.proximitydetectionapp.common.service.ServiceTools;
 import com.mvcion.proximitydetectionapp.databinding.FragmentScannerBinding;
@@ -38,7 +39,6 @@ public class ScannerFragment extends Fragment {
     private int matchMode;
     private int numOfMatches;
 
-    private ScannerViewModel scannerViewModel;
     private FragmentScannerBinding binding;
 
     private void fetchScannerPreferences(Context context) {
@@ -52,8 +52,7 @@ public class ScannerFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        scannerViewModel =
-                new ViewModelProvider(this).get(ScannerViewModel.class);
+        ScannerViewModel scannerViewModel = new ViewModelProvider(this).get(ScannerViewModel.class);
 
         binding = FragmentScannerBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -70,14 +69,19 @@ public class ScannerFragment extends Fragment {
 
         IntentFilter intentFilter = new IntentFilter("ScannerService");
         BroadcastReceiver receiver = new BroadcastReceiver() {
+            @SuppressLint("DefaultLocale")
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals("ScannerService")) {
 
-                    int devicesNearbyNum = intent.getIntExtra("devicesNearbyNum", 0);
-                    int scannerIteration = intent.getIntExtra("scannerIteration", 0);
-                    int allUniqueDevicesNum = intent.getIntExtra("allUniqueDevicesNum", 0);
-                    String[] proximityInfos = intent.getStringArrayListExtra("proximityReport").toArray(new String[0]);
+                    int devicesNearbyNum = intent
+                            .getIntExtra("devicesNearbyNum", 0);
+                    int scannerIteration = intent
+                            .getIntExtra("scannerIteration", 0);
+                    int allUniqueDevicesNum = intent
+                            .getIntExtra("allUniqueDevicesNum", 0);
+                    String[] proximityInfos = intent
+                            .getStringArrayListExtra("proximityReport").toArray(new String[0]);
 
                     TextView nearbyDevicesCounterTextView = binding.scannerTextViewNearbyDevicesCounter;
                     TextView scannerIterationTextView = binding.scannerTextViewScannerIteration;
@@ -85,7 +89,7 @@ public class ScannerFragment extends Fragment {
                     ListView devicesListView = binding.proximityDetectionListView;
                     TextView updateFrequencyTextView = binding.scannerTextViewUpdateFrequency;
 
-                    nearbyDevicesCounterTextView.setText(MessageFormat.format("{0}", devicesNearbyNum));
+                    nearbyDevicesCounterTextView.setText(String.format("%d", devicesNearbyNum));
                     scannerIterationTextView.setText(MessageFormat.format(
                             SCANNER_ITERATION_PATTERN, scannerIteration
                     ));
@@ -109,6 +113,8 @@ public class ScannerFragment extends Fragment {
 
         switchCompat.setOnCheckedChangeListener((view, isChecked) -> {
             if (isChecked) {
+                requireActivity().registerReceiver(receiver, intentFilter);
+
                 progressBar.setVisibility(View.VISIBLE);
 
                 fetchScannerPreferences(inflater.getContext());
@@ -123,9 +129,37 @@ public class ScannerFragment extends Fragment {
                                         .putExtra("numOfMatches", numOfMatches)
                         );
             } else {
-                requireActivity()
-                        .stopService(new Intent(getActivity(), ScannerService.class));
+                requireActivity().unregisterReceiver(receiver);
+
                 progressBar.setVisibility(View.INVISIBLE);
+
+                requireActivity()
+                        .stopService(
+                                new Intent(getActivity(), ScannerService.class)
+                        );
+
+                TextView nearbyDevicesCounterTextView = binding.scannerTextViewNearbyDevicesCounter;
+                TextView scannerIterationTextView = binding.scannerTextViewScannerIteration;
+                TextView uniqueDevicesTotalTextView = binding.scannerTextViewUniqueDevices;
+                ListView devicesListView = binding.proximityDetectionListView;
+                TextView updateFrequencyTextView = binding.scannerTextViewUpdateFrequency;
+
+                nearbyDevicesCounterTextView.setText("0");
+                scannerIterationTextView.setText(MessageFormat.format(
+                        SCANNER_ITERATION_PATTERN, 0
+                ));
+                uniqueDevicesTotalTextView.setText(MessageFormat.format(
+                        UNIQUE_DEVICES_TOTAL_PATTERN, 0
+                ));
+                updateFrequencyTextView.setText(MessageFormat.format(
+                        UPDATE_FREQUENCY_PATTERN, "-"
+                ));
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                        inflater.getContext(),
+                        android.R.layout.simple_list_item_1,
+                        new String[]{}
+                );
+                devicesListView.setAdapter(adapter);
             }
         });
 

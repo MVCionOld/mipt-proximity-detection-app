@@ -1,14 +1,14 @@
-package com.mvcion.proximitydetectionapp.ui.combined;
+package com.mvcion.proximitydetectionapp.ui.history;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class CombinedViewModel extends ViewModel {
+public class HistoryViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public CombinedViewModel() {
+    public HistoryViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is combined fragment");
     }

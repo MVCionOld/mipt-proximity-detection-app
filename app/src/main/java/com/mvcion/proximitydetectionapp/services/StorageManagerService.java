@@ -1,4 +1,4 @@
-package com.mvcion.proximitydetectionapp;
+package com.mvcion.proximitydetectionapp.services;
 
 import android.app.Service;
 import android.content.ContentValues;

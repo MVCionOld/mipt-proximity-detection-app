@@ -1,4 +1,4 @@
-package com.mvcion.proximitydetectionapp;
+package com.mvcion.proximitydetectionapp.services;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -14,6 +14,7 @@ import android.util.Log;
 import com.mvcion.proximitydetectionapp.common.preferences.PreferencesFacade;
 import com.mvcion.proximitydetectionapp.common.service.ServiceUuis;
 
+@SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
 public class AdvertiserService extends Service {
     private static final String TAG = "AdvertiserService";
 

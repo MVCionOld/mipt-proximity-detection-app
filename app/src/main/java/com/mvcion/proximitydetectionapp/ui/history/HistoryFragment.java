@@ -1,4 +1,4 @@
-package com.mvcion.proximitydetectionapp.ui.combined;
+package com.mvcion.proximitydetectionapp.ui.history;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,19 +16,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.mvcion.proximitydetectionapp.common.db.DBHelper;
 import com.mvcion.proximitydetectionapp.dao.ProximityDetectionScanResultDao;
-import com.mvcion.proximitydetectionapp.databinding.FragmentCombinedBinding;
+import com.mvcion.proximitydetectionapp.databinding.FragmentHistoryBinding;
 
-public class CombinedFragment extends Fragment {
+public class HistoryFragment extends Fragment {
 
-    private CombinedViewModel combinedViewModel;
-    private FragmentCombinedBinding binding;
+    private FragmentHistoryBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        combinedViewModel =
-                new ViewModelProvider(this).get(CombinedViewModel.class);
+        HistoryViewModel historyViewModel = new ViewModelProvider(this).get(HistoryViewModel.class);
 
-        binding = FragmentCombinedBinding.inflate(inflater, container, false);
+        binding = FragmentHistoryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         String[] proximityInfos = new String[0];

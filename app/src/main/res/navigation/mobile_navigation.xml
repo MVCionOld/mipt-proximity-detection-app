@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/nav_slideshow"
-        android:name="com.mvcion.proximitydetectionapp.ui.combined.CombinedFragment"
-        android:label="@string/menu_combined"
-        tools:layout="@layout/fragment_combined" />
+        android:name="com.mvcion.proximitydetectionapp.ui.history.HistoryFragment"
+        android:label="@string/menu_history"
+        tools:layout="@layout/fragment_history" />
 </navigation>
