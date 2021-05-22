@@ -4,4 +4,7 @@
     <string name="advertiser">Advertiser</string>
     <string name="scanner">Scanner</string>
     <string name="history">History</string>
+    <string name="scanner_iteration_0">Scanner iteration: 0</string>
+    <string name="unique_devices_total_0">Unique devices total: 0</string>
+    <string name="update_frequency">Update frequency: -</string>
 </resources>

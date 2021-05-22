@@ -30,7 +30,7 @@ public class ScannerFragment extends Fragment {
 
     private final String SCANNER_ITERATION_PATTERN = "Scanner iteration: {0}";
     private final String UNIQUE_DEVICES_TOTAL_PATTERN = "Unique devices total: {0}";
-    private final String UPDATE_FREQUENCY_PATTERN = "Update frequency: {0}s";
+    private final String UPDATE_FREQUENCY_PATTERN = "Update frequency: {0}{1}";
 
     private long processingWindowNanos;
     private long reportDelayMillis;
@@ -97,7 +97,8 @@ public class ScannerFragment extends Fragment {
                             UNIQUE_DEVICES_TOTAL_PATTERN, allUniqueDevicesNum
                     ));
                     updateFrequencyTextView.setText(MessageFormat.format(
-                            UPDATE_FREQUENCY_PATTERN, processingWindowNanos / 1_000_000_000.0
+                            UPDATE_FREQUENCY_PATTERN,
+                            processingWindowNanos / 1_000_000_000.0, "s"
                     ));
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(
                             inflater.getContext(),
@@ -152,7 +153,7 @@ public class ScannerFragment extends Fragment {
                         UNIQUE_DEVICES_TOTAL_PATTERN, 0
                 ));
                 updateFrequencyTextView.setText(MessageFormat.format(
-                        UPDATE_FREQUENCY_PATTERN, "-"
+                        UPDATE_FREQUENCY_PATTERN, "-", ""
                 ));
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(
                         inflater.getContext(),

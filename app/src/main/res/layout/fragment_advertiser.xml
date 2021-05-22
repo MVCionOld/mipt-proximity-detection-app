@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.advertiser.AdvertiserFragment">
 
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/advertiser__switch_compat__running"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="@string/advertiser"
+        android:gravity="center"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <LinearLayout
         android:gravity="center"
         android:orientation="vertical"
@@ -14,25 +26,13 @@
 
         <ProgressBar
             android:id="@+id/advertiser__progress_bar__running"
-            android:layout_width="150sp"
-            android:layout_height="250sp"
-            android:layout_weight="1"
+            android:layout_width="200sp"
+            android:layout_height="180sp"
             style="?android:attr/progressBarStyleHorizontal"
             android:progress="80"
             android:progressDrawable="@drawable/spinning_progress"
             android:indeterminate="true"
             android:gravity="center"/>
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/advertiser__switch_compat__running"
-            android:layout_width="150sp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:checked="false"
-            android:text="@string/advertiser"
-            android:gravity="center"
-            />
-
 
     </LinearLayout>
 

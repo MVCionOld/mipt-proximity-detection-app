@@ -63,16 +63,19 @@ public class ProximityDetectionScanResultDto {
     public String toString() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && avgTxPower != 0) {
             return MessageFormat.format(
-                    "{0}\nmin RSSI: {1}\nmax RSSI: {2}\navg RSSI: {3}"
-                            + "\nmin Tx power: {4}\nmax Tx power: {5}\navg Tx power: {6}"
-                            + "\ncounter: {7}",
+                    "Device: {0}\nprocessed datetime: {8}\nRSSI: {3} in [{1}; {2}]"
+                            + "TxPower: {6} in [{4}; {5}]\ncounter: {7}",
                     mac, minRssi, maxRssi, avgRssi,
                     minTxPower, maxTxPower, avgTxPower,
-                    counter);
+                    counter, processedDttm
+            );
         } else {
             return MessageFormat.format(
-                    "{0}\nmin RSSI: {1}\nmax RSSI: {2}\navgRssi: {3}\ncounter: {4}",
-                    mac, minRssi, maxRssi, avgRssi, counter);
+                    "Device: {0}\nprocessed datetime: {5}\nRSSI: {3} in [{1}; {2}]"
+                            + "\ncounter: {4}",
+                    mac, minRssi, maxRssi, avgRssi,
+                    counter, processedDttm
+            );
         }
     }
 }

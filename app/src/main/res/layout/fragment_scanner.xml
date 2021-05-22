@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,7 +12,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            >
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/scanner__switch_compat__running"
@@ -23,6 +28,7 @@
                 android:checked="false"
                 android:text="@string/scanner"
                 android:gravity="center"
+                android:textSize="22sp"
                 />
 
             <LinearLayout
@@ -34,21 +40,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/scanner__text_view__scanner_iteration"
-                    android:text="Scanner iteration: 0"
+                    android:text="@string/scanner_iteration_0"
+                    android:textSize="17sp"
                     />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/scanner__text_view__unique_devices"
-                    android:text="Unique devices total: 0"
+                    android:text="@string/unique_devices_total_0"
+                    android:textSize="17sp"
                     />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/scanner__text_view__update_frequency"
-                    android:text="Update frequency: -"
+                    android:text="@string/update_frequency"
+                    android:textSize="17sp"
                     />
 
             </LinearLayout>
@@ -78,13 +87,14 @@
                     android:gravity="center"
                     android:text="@string/zero"
                     android:id="@+id/scanner__text_view__nearby_devices_counter"
-                    android:textSize="120sp"
+                    android:textSize="160sp"
                     />
             </FrameLayout>
 
             <ListView android:id="@+id/proximity_detection__list_view"
                 android:layout_width="match_parent"
-                android:drawSelectorOnTop="true"
+                android:textAlignment="center"
+                android:textSize="20sp"
                 android:layout_height="match_parent"/>
 
         </LinearLayout>
