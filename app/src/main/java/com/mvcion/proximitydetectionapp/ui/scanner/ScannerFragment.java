@@ -19,8 +19,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.mvcion.proximitydetectionapp.ScannerService;
-import com.mvcion.proximitydetectionapp.common.PreferencesFacade;
-import com.mvcion.proximitydetectionapp.common.ServiceTools;
+import com.mvcion.proximitydetectionapp.common.preferences.PreferencesFacade;
+import com.mvcion.proximitydetectionapp.common.service.ServiceTools;
 import com.mvcion.proximitydetectionapp.databinding.FragmentScannerBinding;
 
 import java.text.MessageFormat;
@@ -82,7 +82,7 @@ public class ScannerFragment extends Fragment {
                     TextView nearbyDevicesCounterTextView = binding.scannerTextViewNearbyDevicesCounter;
                     TextView scannerIterationTextView = binding.scannerTextViewScannerIteration;
                     TextView uniqueDevicesTotalTextView = binding.scannerTextViewUniqueDevices;
-                    ListView devicesListView = (ListView) binding.proximityDetectionListView;
+                    ListView devicesListView = binding.proximityDetectionListView;
                     TextView updateFrequencyTextView = binding.scannerTextViewUpdateFrequency;
 
                     nearbyDevicesCounterTextView.setText(MessageFormat.format("{0}", devicesNearbyNum));
@@ -95,7 +95,7 @@ public class ScannerFragment extends Fragment {
                     updateFrequencyTextView.setText(MessageFormat.format(
                             UPDATE_FREQUENCY_PATTERN, processingWindowNanos / 1_000_000_000.0
                     ));
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(
                             inflater.getContext(),
                             android.R.layout.simple_list_item_1,
                             proximityInfos

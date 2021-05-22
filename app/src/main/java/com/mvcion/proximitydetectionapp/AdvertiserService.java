@@ -11,8 +11,8 @@ import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.util.Log;
 
-import com.mvcion.proximitydetectionapp.common.PreferencesFacade;
-import com.mvcion.proximitydetectionapp.common.ServiceUuis;
+import com.mvcion.proximitydetectionapp.common.preferences.PreferencesFacade;
+import com.mvcion.proximitydetectionapp.common.service.ServiceUuis;
 
 public class AdvertiserService extends Service {
     private static final String TAG = "AdvertiserService";

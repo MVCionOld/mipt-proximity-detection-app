@@ -1,4 +1,4 @@
-package com.mvcion.proximitydetectionapp.common;
+package com.mvcion.proximitydetectionapp.common.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,7 +8,7 @@ import java.text.MessageFormat;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final String PROXIMITY_DETECTION_DB_NAME = "PROXIMITY_DETECTION_";
+    public static final String PROXIMITY_DETECTION_DB_NAME = "PROXIMITY_DETECTION";
     public static final int SCANNED_RECORDS_DB_VERSION = 1;
 
     public static final String SCANNED_RECORDS_TABLE_NAME = "SCANNED_RECORDS";
@@ -23,6 +23,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String SCANNED_RECORDS_FIELD_MIN_TXPOWER = "min_txpower";
     public static final String SCANNED_RECORDS_FIELD_MAX_TXPOWER = "max_txpower";
     public static final String SCANNED_RECORDS_FIELD_AVG_TXPOWER = "avg_txpower";
+    public static final String SCANNED_RECORDS_FIELD_COUNTER = "counter";
     public static final String SCANNED_RECORDS_FIELD_PROCESSING_WINDOW_MILLIS = "processing_window_millis";
 
     public DBHelper(Context context) {
@@ -44,7 +45,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 "{9} REAL, " +
                 "{10} REAL, " +
                 "{11} REAL, " +
-                "{12} INTEGER" +
+                "{12} INTEGER, " +
+                "{13} INTEGER" +
                 ");",
                 SCANNED_RECORDS_TABLE_NAME,
                 SCANNED_RECORDS_FIELD_ID,
@@ -58,6 +60,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 SCANNED_RECORDS_FIELD_MIN_TXPOWER,
                 SCANNED_RECORDS_FIELD_MAX_TXPOWER,
                 SCANNED_RECORDS_FIELD_AVG_TXPOWER,
+                SCANNED_RECORDS_FIELD_COUNTER,
                 SCANNED_RECORDS_FIELD_PROCESSING_WINDOW_MILLIS
         ));
     }

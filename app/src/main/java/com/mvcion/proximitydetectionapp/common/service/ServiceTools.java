@@ -1,4 +1,4 @@
-package com.mvcion.proximitydetectionapp.common;
+package com.mvcion.proximitydetectionapp.common.service;
 
 import android.app.ActivityManager;
 import android.content.Context;

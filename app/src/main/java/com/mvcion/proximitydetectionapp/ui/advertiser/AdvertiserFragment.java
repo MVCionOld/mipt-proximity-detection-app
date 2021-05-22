@@ -14,8 +14,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.mvcion.proximitydetectionapp.AdvertiserService;
-import com.mvcion.proximitydetectionapp.common.PreferencesFacade;
-import com.mvcion.proximitydetectionapp.common.ServiceTools;
+import com.mvcion.proximitydetectionapp.common.preferences.PreferencesFacade;
+import com.mvcion.proximitydetectionapp.common.service.ServiceTools;
 import com.mvcion.proximitydetectionapp.databinding.FragmentAdvertiserBinding;
 
 public class AdvertiserFragment extends Fragment {

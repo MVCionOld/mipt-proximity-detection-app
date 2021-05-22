@@ -1,4 +1,4 @@
-package com.mvcion.proximitydetectionapp.common;
+package com.mvcion.proximitydetectionapp.common.preferences;
 
 import android.bluetooth.le.AdvertiseSettings;
 import android.bluetooth.le.ScanSettings;
