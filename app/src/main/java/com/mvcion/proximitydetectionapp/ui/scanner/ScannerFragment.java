@@ -173,7 +173,9 @@ public class ScannerFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        requireActivity().unregisterReceiver(receiver);
+        try {
+            requireActivity().unregisterReceiver(receiver);
+        } catch (IllegalArgumentException ignored) {}
         super.onDestroyView();
         binding = null;
     }
