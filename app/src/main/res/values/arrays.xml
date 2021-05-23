@@ -1,12 +1,81 @@
 <resources>
-    <!-- Reply Preference -->
-    <string-array name="reply_entries">
-        <item>Reply</item>
-        <item>Reply to all</item>
+    <!-- AdvertiserMode Preference -->
+    <string-array name="advertiser_mode_entries">
+        <item>Low power</item>
+        <item>Balanced</item>
+        <item>Low latency</item>
     </string-array>
 
-    <string-array name="reply_values">
-        <item>reply</item>
-        <item>reply_all</item>
+    <string-array name="advertiser_mode_values">
+        <item>ADVERTISE_MODE_LOW_POWER</item>
+        <item>ADVERTISE_MODE_BALANCED</item>
+        <item>ADVERTISE_MODE_LOW_LATENCY</item>
+    </string-array>
+
+    <!-- TxPower Preference -->
+    <string-array name="tx_power_entries">
+        <item>Ultra low</item>
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
+
+    <string-array name="tx_power_values">
+        <item>ADVERTISE_TX_POWER_ULTRA_LOW</item>
+        <item>ADVERTISE_TX_POWER_LOW</item>
+        <item>ADVERTISE_TX_POWER_MEDIUM</item>
+        <item>ADVERTISE_TX_POWER_HIGH</item>
+    </string-array>
+
+    <!-- ScannerMode Preference -->
+    <string-array name="scanner_mode_entries">
+        <item>Low power</item>
+        <item>Balanced</item>
+        <item>Low latency</item>
+    </string-array>
+
+    <string-array name="scanner_mode_values">
+        <item>SCAN_MODE_LOW_POWER</item>
+        <item>SCAN_MODE_BALANCED</item>
+        <item>SCAN_MODE_LOW_LATENCY</item>
+    </string-array>
+
+    <!-- MatchMode Preference -->
+    <string-array name="match_mode_entries">
+        <item>Aggressive</item>
+        <item>Sticky</item>
+    </string-array>
+
+    <string-array name="match_mode_values">
+        <item>MATCH_MODE_AGGRESSIVE</item>
+        <item>MATCH_MODE_STICKY</item>
+    </string-array>
+
+    <!-- NumOfMatches Preference -->
+    <string-array name="num_of_matches_entries">
+        <item>One</item>
+        <item>Few</item>
+        <item>Max</item>
+    </string-array>
+
+    <string-array name="num_of_matches_values">
+        <item>MATCH_NUM_ONE_ADVERTISEMENT</item>
+        <item>MATCH_NUM_FEW_ADVERTISEMENT</item>
+        <item>MATCH_NUM_MAX_ADVERTISEMENT</item>
+    </string-array>
+
+    <!-- ProcessingWindow Preference -->
+    <string-array name="processing_window_entries">
+        <item>1 second</item>
+        <item>2 seconds</item>
+        <item>5 seconds</item>
+        <item>10 seconds</item>
+    </string-array>
+
+    <string-array name="processing_window_values">
+        <item>1</item>
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
     </string-array>
 </resources>

@@ -22,7 +22,7 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_settings">Proximity Detection Settings</string>
     <string name="zero">0</string>
     <string name="advertiser">Advertiser</string>
     <string name="scanner">Scanner</string>

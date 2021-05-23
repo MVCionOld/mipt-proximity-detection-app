@@ -1,94 +1,91 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/messages_header">
+    <PreferenceCategory app:title="Advertiser">
 
-        <EditTextPreference
-            app:key="signature"
-            app:title="@string/signature_title"
+        <ListPreference
+            app:defaultValue="ADVERTISE_MODE_BALANCED"
+            app:entries="@array/advertiser_mode_entries"
+            app:entryValues="@array/advertiser_mode_values"
+            app:key="advertiser_mode"
+            app:title="Set advertise mode to control the advertising power and latency"
+            app:singleLineTitle="false"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/reply_title"
+            app:defaultValue="ADVERTISE_TX_POWER_HIGH"
+            app:entries="@array/tx_power_entries"
+            app:entryValues="@array/tx_power_values"
+            app:key="advertiser_tx_power"
+            app:title="Set advertise TX power level to control the transmission power level for the advertising"
+            app:singleLineTitle="false"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
+    <PreferenceCategory app:title="Scanner">
 
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
-
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
-
-    </PreferenceCategory>
-    <PreferenceCategory app:title="@string/messages_header">
-
-        <EditTextPreference
-            app:key="signature"
-            app:title="@string/signature_title"
+        <ListPreference
+            app:defaultValue="SCAN_MODE_BALANCED"
+            app:entries="@array/scanner_mode_entries"
+            app:entryValues="@array/scanner_mode_values"
+            app:key="scanner_mode"
+            app:title="Set scan mode for Bluetooth LE scan"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/reply_title"
-            app:useSimpleSummaryProvider="true" />
-
-    </PreferenceCategory>
-    <PreferenceCategory app:title="@string/sync_header">
-
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
-
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
-
-    </PreferenceCategory>
-    <PreferenceCategory app:title="@string/messages_header">
-
-        <EditTextPreference
-            app:key="signature"
-            app:title="@string/signature_title"
+            app:defaultValue="MATCH_MODE_STICKY"
+            app:entries="@array/match_mode_entries"
+            app:entryValues="@array/match_mode_values"
+            app:key="scanner_match_mode"
+            app:title="Set match mode for Bluetooth LE scan filters hardware match"
+            app:singleLineTitle="false"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/reply_title"
+            app:defaultValue="MATCH_NUM_FEW_ADVERTISEMENT"
+            app:entries="@array/num_of_matches_entries"
+            app:entryValues="@array/num_of_matches_values"
+            app:key="scanner_num_of_matches"
+            app:title="Set the number of matches for Bluetooth LE scan filters hardware match"
+            app:singleLineTitle="false"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="5"
+            app:entries="@array/processing_window_entries"
+            app:entryValues="@array/processing_window_values"
+            app:key="scanner_processing_window_nanos"
+            app:title="Set scanner processing window"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
-    <PreferenceCategory app:title="@string/sync_header">
+
+    <PreferenceCategory app:title="Proximity detection sharing">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="share_proximity_report_via_bluetooth"
+            app:summaryOff="Proximity reports are stored only locally"
+            app:summaryOn="Proximity reports will be being streamed via Bluetooth"
+            app:title="Allow sharing proximity report via Bluetooth" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="share_proximity_report_via_usb"
+            app:summaryOff="Proximity reports are stored only locally"
+            app:summaryOn="Proximity reports will be being streamed via USB"
+            app:title="Allow sharing proximity report via USB" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Contact tracing sharing">
 
         <SwitchPreferenceCompat
             app:key="sync"
-            app:title="@string/sync_title" />
-
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
+            app:defaultValue="false"
+            app:summaryOff="All contacts are stored only locally"
+            app:summaryOn="All contacts are duplicated to external service"
+            app:title="Allow sharing contact tracing with external service" />
 
     </PreferenceCategory>
 
