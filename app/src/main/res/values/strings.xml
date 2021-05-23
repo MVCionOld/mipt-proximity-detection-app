@@ -31,4 +31,5 @@
     <string name="unique_devices_total_0">Unique devices total: 0</string>
     <string name="update_frequency">Update frequency: -</string>
     <string name="rows_count_0">Rows count: 0</string>
+    <string name="clear">clear</string>
 </resources>

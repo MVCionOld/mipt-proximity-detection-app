@@ -13,16 +13,38 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:textAlignment="center">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/history__text_view__history_size"
-            android:textAlignment="center"
-            android:text="@string/rows_count_0"
-            android:textSize="22sp"
-            />
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/history__text_view__history_size"
+                android:textAlignment="center"
+                android:text="@string/rows_count_0"
+                android:layout_marginTop="3dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:textSize="22sp"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/history__button__clear_history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/clear"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:textSize="12sp"
+             />
+
+        </LinearLayout>
 
         <ListView android:id="@+id/proximity_detection_history__list_view"
             android:drawSelectorOnTop="true"
