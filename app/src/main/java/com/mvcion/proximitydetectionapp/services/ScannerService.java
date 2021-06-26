@@ -13,7 +13,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.mvcion.proximitydetectionapp.common.preferences.PreferencesFacade;
+import com.mvcion.proximitydetectionapp.common.preferences.DefaultPreferences;
 import com.mvcion.proximitydetectionapp.dto.ProximityDetectionScanResultDto;
 import com.mvcion.proximitydetectionapp.common.service.ServiceUuis;
 
@@ -204,27 +204,27 @@ public class ScannerService extends Service {
 
         processingWindowNanos = intent.getLongExtra(
                 "processingWindowNanos",
-                PreferencesFacade.DEFAULT_SCANNER_PROCESSING_WINDOW_NANOS_VALUE
+                DefaultPreferences.getScanProcessingWindowNanosValue()
         );
         reportDelayMillis = intent.getLongExtra(
                 "reportDelayMillis",
-                PreferencesFacade.DEFAULT_SCANNER_REPORT_DELAY_MILLIS
+                DefaultPreferences.getScanReportDelayMillisValue()
         );
         scannerMode = intent.getIntExtra(
                 "scannerMode",
-                PreferencesFacade.DEFAULT_SCANNER_MODE_VALUE
+                DefaultPreferences.getScanModeValue()
         );
         callbackType = intent.getIntExtra(
                 "callbackType",
-                PreferencesFacade.DEFAULT_CALLBACK_TYPE_VALUE
+                DefaultPreferences.getScanCallbackTypeValue()
         );
         matchMode = intent.getIntExtra(
                 "matchMode",
-                PreferencesFacade.DEFAULT_MATCH_MODE_VALUE
+                DefaultPreferences.getScanMatchModeValue()
         );
         numOfMatches = intent.getIntExtra(
                 "numOfMatches",
-                PreferencesFacade.DEFAULT_NUM_OF_MATCHES_VALUE
+                DefaultPreferences.getScanNumOfMatchesValue()
         );
 
         if (bluetoothAdapter == null) {

@@ -43,12 +43,12 @@ public class ScannerFragment extends Fragment {
     private BroadcastReceiver receiver;
 
     private void fetchScannerPreferences(Context context) {
-        processingWindowNanos = PreferencesFacade.getProcessingWindowNanos(context);
-        reportDelayMillis = PreferencesFacade.getReportDelayMillis(context);
-        scannerMode = PreferencesFacade.getScannerMode(context);
-        callbackType = PreferencesFacade.getCallbackType(context);
-        matchMode = PreferencesFacade.getMatchMode(context);
-        numOfMatches = PreferencesFacade.getNumOfMatches(context);
+        processingWindowNanos = PreferencesFacade.getScanProcessingWindowNanos(context);
+        reportDelayMillis = PreferencesFacade.getScanReportDelayMillis(context);
+        scannerMode = PreferencesFacade.getScanMode(context);
+        callbackType = PreferencesFacade.getScanCallbackType(context);
+        matchMode = PreferencesFacade.getScanMatchMode(context);
+        numOfMatches = PreferencesFacade.getScanNumOfMatches(context);
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,

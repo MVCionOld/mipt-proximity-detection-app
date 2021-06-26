@@ -11,7 +11,7 @@ import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.util.Log;
 
-import com.mvcion.proximitydetectionapp.common.preferences.PreferencesFacade;
+import com.mvcion.proximitydetectionapp.common.preferences.DefaultPreferences;
 import com.mvcion.proximitydetectionapp.common.service.ServiceUuis;
 
 @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
@@ -88,13 +88,16 @@ public class AdvertiserService extends Service {
         Log.d(TAG, "onStartCommand");
 
         advertiserMode = intent.getIntExtra(
-                "advertiserMode", PreferencesFacade.DEFAULT_ADVERTISER_MODE_VALUE
+                "advertiserMode",
+                DefaultPreferences.getAdvertiseModeValue()
         );
         advertiserTxPower = intent.getIntExtra(
-                "advertiserTxPower", PreferencesFacade.DEFAULT_ADVERTISER_TX_POWER_VALUE
+                "advertiserTxPower",
+                DefaultPreferences.getAdvertiseTxPowerValue()
         );
         isConnectable = intent.getBooleanExtra(
-                "isConnectable", PreferencesFacade.DEFAULT_ADVERTISER_IS_CONNECTABLE_VALUE
+                "isConnectable",
+                DefaultPreferences.isAdvertiseIsConnectableValue()
         );
 
         if (bluetoothAdapter == null) {

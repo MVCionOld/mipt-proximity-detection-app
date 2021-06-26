@@ -3,6 +3,7 @@ package com.mvcion.proximitydetectionapp.ui.advertiser;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import com.mvcion.proximitydetectionapp.common.preferences.PreferencesFacade;
 import com.mvcion.proximitydetectionapp.common.service.ServiceTools;
 import com.mvcion.proximitydetectionapp.databinding.FragmentAdvertiserBinding;
 
+import java.text.MessageFormat;
+
 public class AdvertiserFragment extends Fragment {
 
     private int advertiserMode;
@@ -27,9 +30,9 @@ public class AdvertiserFragment extends Fragment {
     private FragmentAdvertiserBinding binding;
 
     private void fetchAdvertiserPreferences(Context context) {
-        advertiserMode = PreferencesFacade.getAdvertiserMode(context);
-        advertiserTxPower = PreferencesFacade.getAdvertiserTxPower(context);
-        isConnectable = PreferencesFacade.getAdvertiserIsConnectable(context);
+        advertiserMode = PreferencesFacade.getAdvertiseMode(context);
+        advertiserTxPower = PreferencesFacade.getAdvertiseTxPower(context);
+        isConnectable = PreferencesFacade.getAdvertiseIsConnectable(context);
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
