@@ -7,8 +7,8 @@
             app:entries="@array/advertiser_mode_entries"
             app:entryValues="@array/advertiser_mode_values"
             app:key="advertiser_mode"
-            app:title="Set advertise mode to control the advertising power and latency"
             app:singleLineTitle="false"
+            app:title="Set advertise mode to control the advertising power and latency"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
@@ -16,8 +16,8 @@
             app:entries="@array/tx_power_entries"
             app:entryValues="@array/tx_power_values"
             app:key="advertiser_tx_power"
-            app:title="Set advertise TX power level to control the transmission power level for the advertising"
             app:singleLineTitle="false"
+            app:title="Set advertise TX power level to control the transmission power level for the advertising"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
@@ -37,8 +37,8 @@
             app:entries="@array/match_mode_entries"
             app:entryValues="@array/match_mode_values"
             app:key="scanner_match_mode"
-            app:title="Set match mode for Bluetooth LE scan filters hardware match"
             app:singleLineTitle="false"
+            app:title="Set match mode for Bluetooth LE scan filters hardware match"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
@@ -46,8 +46,8 @@
             app:entries="@array/num_of_matches_entries"
             app:entryValues="@array/num_of_matches_values"
             app:key="scanner_num_of_matches"
-            app:title="Set the number of matches for Bluetooth LE scan filters hardware match"
             app:singleLineTitle="false"
+            app:title="Set the number of matches for Bluetooth LE scan filters hardware match"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
@@ -81,8 +81,8 @@
     <PreferenceCategory app:title="Contact tracing sharing">
 
         <SwitchPreferenceCompat
-            app:key="sync"
             app:defaultValue="false"
+            app:key="sync"
             app:summaryOff="All contacts are stored only locally"
             app:summaryOn="All contacts are duplicated to external service"
             app:title="Allow sharing contact tracing with external service" />

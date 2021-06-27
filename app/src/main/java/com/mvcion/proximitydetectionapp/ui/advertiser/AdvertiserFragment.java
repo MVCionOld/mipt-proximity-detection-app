@@ -3,7 +3,6 @@ package com.mvcion.proximitydetectionapp.ui.advertiser;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +13,10 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.mvcion.proximitydetectionapp.services.AdvertiserService;
 import com.mvcion.proximitydetectionapp.common.preferences.PreferencesFacade;
 import com.mvcion.proximitydetectionapp.common.service.ServiceTools;
 import com.mvcion.proximitydetectionapp.databinding.FragmentAdvertiserBinding;
-
-import java.text.MessageFormat;
+import com.mvcion.proximitydetectionapp.services.AdvertiserService;
 
 public class AdvertiserFragment extends Fragment {
 

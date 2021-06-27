@@ -3,23 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_advertiser">
 
     <fragment
-        android:id="@+id/nav_slideshow"
+        android:id="@+id/nav_history"
         android:name="com.mvcion.proximitydetectionapp.ui.history.HistoryFragment"
         android:label="@string/menu_history"
         tools:layout="@layout/fragment_history" />
 
     <fragment
-        android:id="@+id/nav_gallery"
+        android:id="@+id/nav_scanner"
         android:name="com.mvcion.proximitydetectionapp.ui.scanner.ScannerFragment"
         android:label="@string/menu_scanner"
         tools:layout="@layout/fragment_scanner" />
 
     <fragment
-        android:id="@+id/nav_home"
+        android:id="@+id/nav_advertiser"
         android:name="com.mvcion.proximitydetectionapp.ui.advertiser.AdvertiserFragment"
         android:label="@string/menu_advertiser"
         tools:layout="@layout/fragment_advertiser" />
+
 </navigation>
