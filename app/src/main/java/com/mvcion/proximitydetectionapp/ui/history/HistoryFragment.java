@@ -16,7 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.mvcion.proximitydetectionapp.common.db.DBHelper;
+import com.mvcion.proximitydetectionapp.db.DBHelper;
 import com.mvcion.proximitydetectionapp.dao.ProximityDetectionScanResultDao;
 import com.mvcion.proximitydetectionapp.databinding.FragmentHistoryBinding;
 

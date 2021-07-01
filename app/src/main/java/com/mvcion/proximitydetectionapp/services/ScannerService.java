@@ -14,8 +14,9 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.mvcion.proximitydetectionapp.common.preferences.DefaultPreferences;
-import com.mvcion.proximitydetectionapp.dto.ProximityDetectionScanResultDto;
 import com.mvcion.proximitydetectionapp.common.service.ServiceUuis;
+import com.mvcion.proximitydetectionapp.dto.ProximityDetectionScanResultDto;
+import com.mvcion.proximitydetectionapp.services.config.ScannerServiceConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,16 +34,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class ScannerService extends Service {
     private static final String TAG = "ScannerService";
 
-    private int serviceId;
     private boolean smsBounded = false;
     private ServiceConnection smsConnection;
     private Intent smsIntent;
     private StorageManagerService.StorageManagerBinder smsBinder;
 
-    private int scannerMode;
-    private int matchMode;
-    private int numOfMatches;
-    private long processingWindowNanos;
+    private ScannerServiceConfig config = new ScannerServiceConfig();
 
     private Queue<ScanResult> leDevicesStream = new ConcurrentLinkedQueue<>();
 
@@ -72,7 +69,7 @@ public class ScannerService extends Service {
     private Thread proximityResultsDumper;
 
     private Thread scanResultsProducer = new Thread(() -> {
-        List<ScanFilter> scanFilters = new ArrayList<ScanFilter>(){{
+        List<ScanFilter> scanFilters = new ArrayList<ScanFilter>() {{
             add(new ScanFilter
                     .Builder()
                     .setServiceUuid(ServiceUuis.getServiceUuid())
@@ -81,11 +78,11 @@ public class ScannerService extends Service {
         }};
         ScanSettings scanSettings = new ScanSettings
                 .Builder()
-                .setScanMode(scannerMode)
-                .setMatchMode(matchMode)
-                .setNumOfMatches(numOfMatches)
-                .setCallbackType(DefaultPreferences.getScanCallbackTypeValue())
-                .setReportDelay(DefaultPreferences.getScanReportDelayMillisValue())
+                .setScanMode(config.getScannerMode())
+                .setMatchMode(config.getMatchMode())
+                .setNumOfMatches(config.getNumOfMatches())
+                .setCallbackType(config.getScanCallbackType())
+                .setReportDelay(config.getScanReportDelayMillis())
                 .build();
         bluetoothLeScanner.startScan(scanFilters, scanSettings, leScanCallback);
     });
@@ -104,11 +101,11 @@ public class ScannerService extends Service {
             proximityResults = new ArrayList<>();
             nearbyDevices = new ConcurrentHashMap<>();
             final long startTime = System.nanoTime();
-            while (System.nanoTime() - startTime < processingWindowNanos && !Thread.currentThread().isInterrupted()) {
+            while (System.nanoTime() - startTime < config.getProcessingWindowNanos() && !Thread.currentThread().isInterrupted()) {
                 if (leDevicesStream.size() > 0) {
                     ScanResult scanResult = leDevicesStream.remove();
                     String deviceAddress = scanResult.getDevice().toString();
-                    if(nearbyDevices.containsKey(deviceAddress)) {
+                    if (nearbyDevices.containsKey(deviceAddress)) {
                         Objects.requireNonNull(nearbyDevices.get(deviceAddress)).add(scanResult);
                     } else {
                         nearbyDevices.put(deviceAddress, new LinkedList<>(Collections.singletonList(scanResult)));
@@ -119,9 +116,9 @@ public class ScannerService extends Service {
 
         private ArrayList<String> getProximityReport() {
             ArrayList<String> reports = new ArrayList<>(nearbyDevices.size());
-            for (Map.Entry<String, LinkedList<ScanResult>> entry: nearbyDevices.entrySet()) {
+            for (Map.Entry<String, LinkedList<ScanResult>> entry : nearbyDevices.entrySet()) {
                 ProximityDetectionScanResultDto result = new ProximityDetectionScanResultDto(
-                        serviceId,
+                        config,
                         entry.getKey(),
                         entry.getValue()
                 );
@@ -174,9 +171,8 @@ public class ScannerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        serviceId = new Random().nextInt();
         Log.d(TAG, "onCreate");
+
 
         smsIntent = new Intent(getApplicationContext(), StorageManagerService.class);
         smsConnection = new ServiceConnection() {
@@ -197,30 +193,31 @@ public class ScannerService extends Service {
         bindService(smsIntent, smsConnection, BIND_AUTO_CREATE);
     }
 
-    private void setUpPreferences(Intent intent) {
-        scannerMode = intent.getIntExtra(
+    private void loadScannerServiceConfig(Intent intent) {
+        config.setServiceId(new Random().nextInt());
+        config.setScannerMode(intent.getIntExtra(
                 "scannerMode",
                 DefaultPreferences.getScanModeValue()
-        );
-        matchMode = intent.getIntExtra(
+        ));
+        config.setMatchMode(intent.getIntExtra(
                 "matchMode",
                 DefaultPreferences.getScanMatchModeValue()
-        );
-        numOfMatches = intent.getIntExtra(
+        ));
+        config.setNumOfMatches(intent.getIntExtra(
                 "numOfMatches",
                 DefaultPreferences.getScanNumOfMatchesValue()
-        );
-        processingWindowNanos = intent.getLongExtra(
+        ));
+        config.setProcessingWindowNanos(intent.getLongExtra(
                 "processingWindowNanos",
                 DefaultPreferences.getScanProcessingWindowNanosValue()
-        );
+        ));
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
 
-        setUpPreferences(intent);
+        loadScannerServiceConfig(intent);
 
         if (bluetoothAdapter == null) {
             Log.e(TAG, "BluetoothAdapter is not found.");

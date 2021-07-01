@@ -9,7 +9,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.mvcion.proximitydetectionapp.common.db.DBHelper;
+import com.mvcion.proximitydetectionapp.db.DBHelper;
 import com.mvcion.proximitydetectionapp.dto.ProximityDetectionScanResultDto;
 import com.mvcion.proximitydetectionapp.dao.ProximityDetectionScanResultDao;
 

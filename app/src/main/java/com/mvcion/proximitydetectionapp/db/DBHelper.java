@@ -1,4 +1,4 @@
-package com.mvcion.proximitydetectionapp.common.db;
+package com.mvcion.proximitydetectionapp.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
