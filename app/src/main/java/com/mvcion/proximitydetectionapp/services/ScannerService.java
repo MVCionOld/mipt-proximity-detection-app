@@ -39,12 +39,10 @@ public class ScannerService extends Service {
     private Intent smsIntent;
     private StorageManagerService.StorageManagerBinder smsBinder;
 
-    private long processingWindowNanos;
-    private long reportDelayMillis;
     private int scannerMode;
-    private int callbackType;
     private int matchMode;
     private int numOfMatches;
+    private long processingWindowNanos;
 
     private Queue<ScanResult> leDevicesStream = new ConcurrentLinkedQueue<>();
 
@@ -84,10 +82,10 @@ public class ScannerService extends Service {
         ScanSettings scanSettings = new ScanSettings
                 .Builder()
                 .setScanMode(scannerMode)
-                .setCallbackType(callbackType)
                 .setMatchMode(matchMode)
                 .setNumOfMatches(numOfMatches)
-                .setReportDelay(reportDelayMillis)
+                .setCallbackType(DefaultPreferences.getScanCallbackTypeValue())
+                .setReportDelay(DefaultPreferences.getScanReportDelayMillisValue())
                 .build();
         bluetoothLeScanner.startScan(scanFilters, scanSettings, leScanCallback);
     });
@@ -176,6 +174,7 @@ public class ScannerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
         serviceId = new Random().nextInt();
         Log.d(TAG, "onCreate");
 
@@ -198,25 +197,10 @@ public class ScannerService extends Service {
         bindService(smsIntent, smsConnection, BIND_AUTO_CREATE);
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand");
-
-        processingWindowNanos = intent.getLongExtra(
-                "processingWindowNanos",
-                DefaultPreferences.getScanProcessingWindowNanosValue()
-        );
-        reportDelayMillis = intent.getLongExtra(
-                "reportDelayMillis",
-                DefaultPreferences.getScanReportDelayMillisValue()
-        );
+    private void setUpPreferences(Intent intent) {
         scannerMode = intent.getIntExtra(
                 "scannerMode",
                 DefaultPreferences.getScanModeValue()
-        );
-        callbackType = intent.getIntExtra(
-                "callbackType",
-                DefaultPreferences.getScanCallbackTypeValue()
         );
         matchMode = intent.getIntExtra(
                 "matchMode",
@@ -226,6 +210,17 @@ public class ScannerService extends Service {
                 "numOfMatches",
                 DefaultPreferences.getScanNumOfMatchesValue()
         );
+        processingWindowNanos = intent.getLongExtra(
+                "processingWindowNanos",
+                DefaultPreferences.getScanProcessingWindowNanosValue()
+        );
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand");
+
+        setUpPreferences(intent);
 
         if (bluetoothAdapter == null) {
             Log.e(TAG, "BluetoothAdapter is not found.");

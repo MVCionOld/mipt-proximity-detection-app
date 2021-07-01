@@ -20,7 +20,6 @@ public class AdvertiserService extends Service {
 
     private int advertiserMode;
     private int advertiserTxPower;
-    private boolean isConnectable;
 
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothLeAdvertiser bluetoothLeAdvertiser;
@@ -63,7 +62,7 @@ public class AdvertiserService extends Service {
                     .Builder()
                     .setAdvertiseMode(advertiserMode)
                     .setTxPowerLevel(advertiserTxPower)
-                    .setConnectable(isConnectable);
+                    .setConnectable(false);
 
             bluetoothLeAdvertiser.startAdvertising(
                     /*settings = */advertiseSettingsBuilder.build(),
@@ -94,10 +93,6 @@ public class AdvertiserService extends Service {
         advertiserTxPower = intent.getIntExtra(
                 "advertiserTxPower",
                 DefaultPreferences.getAdvertiseTxPowerValue()
-        );
-        isConnectable = intent.getBooleanExtra(
-                "isConnectable",
-                DefaultPreferences.isAdvertiseIsConnectableValue()
         );
 
         if (bluetoothAdapter == null) {

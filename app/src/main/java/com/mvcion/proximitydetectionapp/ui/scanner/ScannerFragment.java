@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.mvcion.proximitydetectionapp.common.preferences.DefaultPreferences;
 import com.mvcion.proximitydetectionapp.common.preferences.PreferencesFacade;
 import com.mvcion.proximitydetectionapp.common.service.ServiceTools;
 import com.mvcion.proximitydetectionapp.databinding.FragmentScannerBinding;
@@ -31,28 +33,30 @@ public class ScannerFragment extends Fragment {
     private final String SCANNER_ITERATION_PATTERN = "Scanner iteration: {0}";
     private final String UNIQUE_DEVICES_TOTAL_PATTERN = "Unique devices total: {0}";
     private final String UPDATE_FREQUENCY_PATTERN = "Update frequency: {0}{1}";
-
-    private long processingWindowNanos;
-    private long reportDelayMillis;
-    private int scannerMode;
-    private int callbackType;
-    private int matchMode;
-    private int numOfMatches;
-
+    private int scannerMode = DefaultPreferences.getAdvertiseModeValue();
+    private int matchMode = DefaultPreferences.getScanMatchModeValue();
+    private int numOfMatches = DefaultPreferences.getScanNumOfMatchesValue();
+    private long processingWindowNanos = DefaultPreferences.getScanProcessingWindowNanosValue();
     private FragmentScannerBinding binding;
     private BroadcastReceiver receiver;
 
-    private void fetchScannerPreferences(Context context) {
-        processingWindowNanos = PreferencesFacade.getScanProcessingWindowNanos(context);
-        reportDelayMillis = PreferencesFacade.getScanReportDelayMillis(context);
-        scannerMode = PreferencesFacade.getScanMode(context);
-        callbackType = PreferencesFacade.getScanCallbackType(context);
-        matchMode = PreferencesFacade.getScanMatchMode(context);
-        numOfMatches = PreferencesFacade.getScanNumOfMatches(context);
-    }
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
+        Log.d("ScannerFragment", MessageFormat.format("scannerMode: {0}", scannerMode));
+        Log.d("ScannerFragment", MessageFormat.format("matchMode: {0}", matchMode));
+        Log.d("ScannerFragment", MessageFormat.format("numOfMatches: {0}", numOfMatches));
+        Log.d("ScannerFragment", MessageFormat.format("processingWindowNanos: {0}", processingWindowNanos));
+
+        Thread fetchScannerPreferences = new Thread(() -> {
+            Context context = inflater.getContext();
+            scannerMode = PreferencesFacade.getScanMode(context);
+            matchMode = PreferencesFacade.getScanMatchMode(context);
+            numOfMatches = PreferencesFacade.getScanNumOfMatches(context);
+            processingWindowNanos = PreferencesFacade.getScanProcessingWindowNanos(context);
+        });
+        fetchScannerPreferences.start();
+
         ScannerViewModel scannerViewModel = new ViewModelProvider(this)
                 .get(ScannerViewModel.class);
 
@@ -117,19 +121,21 @@ public class ScannerFragment extends Fragment {
         switchCompat.setOnCheckedChangeListener((view, isChecked) -> {
             if (isChecked) {
                 requireActivity().registerReceiver(receiver, intentFilter);
-
                 progressBar.setVisibility(View.VISIBLE);
 
-                fetchScannerPreferences(inflater.getContext());
+                try {
+                    fetchScannerPreferences.join();
+                } catch (InterruptedException exception) {
+                    exception.printStackTrace();
+                }
+
                 requireActivity()
                         .startService(
                                 new Intent(getActivity(), ScannerService.class)
-                                        .putExtra("processingWindowNanos", processingWindowNanos)
-                                        .putExtra("reportDelayMillis", reportDelayMillis)
                                         .putExtra("scannerMode", scannerMode)
-                                        .putExtra("callbackType", callbackType)
                                         .putExtra("matchMode", matchMode)
                                         .putExtra("numOfMatches", numOfMatches)
+                                        .putExtra("processingWindowNanos", processingWindowNanos)
                         );
             } else {
                 requireActivity().unregisterReceiver(receiver);

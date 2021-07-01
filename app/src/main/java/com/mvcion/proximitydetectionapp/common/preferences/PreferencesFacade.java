@@ -3,10 +3,13 @@ package com.mvcion.proximitydetectionapp.common.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.preference.PreferenceManager;
+
 public class PreferencesFacade extends PreferencesOptions {
 
-    private static SharedPreferences getAdvertiseSharedPrefs(Context context) {
-        return context.getSharedPreferences(advertiserPreferences, Context.MODE_PRIVATE);
+    public static SharedPreferences getAdvertiseSharedPrefs(Context context) {
+//        return context.getSharedPreferences(advertiserPreferences, Context.MODE_PRIVATE);
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public static int getAdvertiseMode(Context context) {
@@ -40,8 +43,9 @@ public class PreferencesFacade extends PreferencesOptions {
         return ptg.get();
     }
 
-    private static SharedPreferences getScanSharedPrefs(Context context) {
-        return context.getSharedPreferences(scannerPreferences, Context.MODE_PRIVATE);
+    public static SharedPreferences getScanSharedPrefs(Context context) {
+//        return context.getSharedPreferences(scannerPreferences, Context.MODE_PRIVATE);
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public static long getScanProcessingWindowNanos(Context context) {

@@ -3,6 +3,7 @@ package com.mvcion.proximitydetectionapp.ui.advertiser;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,27 +14,33 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.mvcion.proximitydetectionapp.common.preferences.DefaultPreferences;
 import com.mvcion.proximitydetectionapp.common.preferences.PreferencesFacade;
 import com.mvcion.proximitydetectionapp.common.service.ServiceTools;
 import com.mvcion.proximitydetectionapp.databinding.FragmentAdvertiserBinding;
 import com.mvcion.proximitydetectionapp.services.AdvertiserService;
 
+import java.text.MessageFormat;
+
 public class AdvertiserFragment extends Fragment {
 
-    private int advertiserMode;
-    private int advertiserTxPower;
-    private boolean isConnectable;
-
+    private int advertiserMode = DefaultPreferences.getAdvertiseModeValue();
+    private int advertiserTxPower = DefaultPreferences.getAdvertiseTxPowerValue();
     private FragmentAdvertiserBinding binding;
-
-    private void fetchAdvertiserPreferences(Context context) {
-        advertiserMode = PreferencesFacade.getAdvertiseMode(context);
-        advertiserTxPower = PreferencesFacade.getAdvertiseTxPower(context);
-        isConnectable = PreferencesFacade.getAdvertiseIsConnectable(context);
-    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
+        Log.d("AdvertiserFragment", MessageFormat.format("advertiserMode: {0}", advertiserMode));
+        Log.d("AdvertiserFragment", MessageFormat.format("advertiserTxPower: {0}", advertiserTxPower));
+
+        Thread fetchAdvertiserPreferences = new Thread(() -> {
+            Context context = inflater.getContext();
+            advertiserMode = PreferencesFacade.getAdvertiseMode(context);
+            advertiserTxPower = PreferencesFacade.getAdvertiseTxPower(context);
+        });
+        fetchAdvertiserPreferences.start();
+
         AdvertiserViewModel advertiserViewModel = new ViewModelProvider(this)
                 .get(AdvertiserViewModel.class);
 
@@ -53,22 +60,21 @@ public class AdvertiserFragment extends Fragment {
         switchCompat.setOnCheckedChangeListener((view, isChecked) -> {
             if (isChecked) {
                 progressBar.setVisibility(View.VISIBLE);
-                fetchAdvertiserPreferences(inflater.getContext());
+                try {
+                    fetchAdvertiserPreferences.join();
+                } catch (InterruptedException exception) {
+                    exception.printStackTrace();
+                }
+
                 requireActivity()
                         .startService(
                                 new Intent(getActivity(), AdvertiserService.class)
                                     .putExtra("advertiserMode", advertiserMode)
                                     .putExtra("advertiserTxPower", advertiserTxPower)
-                                    .putExtra("isConnectable", isConnectable)
                         );
             } else {
                 requireActivity()
-                        .stopService(
-                                new Intent(
-                                        getActivity(),
-                                        AdvertiserService.class
-                                )
-                        );
+                        .stopService(new Intent(getActivity(), AdvertiserService.class));
                 progressBar.setVisibility(View.INVISIBLE);
             }
         });

@@ -60,7 +60,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Proximity detection sharing">
+    <PreferenceCategory app:title="History data sharing">
 
         <SwitchPreferenceCompat
             app:defaultValue="false"
@@ -68,17 +68,6 @@
             app:summaryOff="Proximity reports are stored only locally"
             app:summaryOn="Proximity reports will be being streamed via Bluetooth"
             app:title="Allow sharing proximity report via Bluetooth" />
-
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:key="share_proximity_report_via_usb"
-            app:summaryOff="Proximity reports are stored only locally"
-            app:summaryOn="Proximity reports will be being streamed via USB"
-            app:title="Allow sharing proximity report via USB" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory app:title="Contact tracing sharing">
 
         <SwitchPreferenceCompat
             app:defaultValue="false"

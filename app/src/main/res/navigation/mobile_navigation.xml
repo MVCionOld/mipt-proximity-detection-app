@@ -15,12 +15,20 @@
         android:id="@+id/nav_scanner"
         android:name="com.mvcion.proximitydetectionapp.ui.scanner.ScannerFragment"
         android:label="@string/menu_scanner"
-        tools:layout="@layout/fragment_scanner" />
+        tools:layout="@layout/fragment_scanner" >
+        <action
+            android:id="@+id/action_nav_scanner_to_nav_history"
+            app:destination="@id/nav_history" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_advertiser"
         android:name="com.mvcion.proximitydetectionapp.ui.advertiser.AdvertiserFragment"
         android:label="@string/menu_advertiser"
-        tools:layout="@layout/fragment_advertiser" />
+        tools:layout="@layout/fragment_advertiser" >
+        <action
+            android:id="@+id/action_nav_advertiser_to_nav_scanner"
+            app:destination="@id/nav_scanner" />
+    </fragment>
 
 </navigation>

@@ -19,7 +19,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.mvcion.proximitydetectionapp.databinding.ActivityMainBinding;
 
 @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
@@ -41,13 +40,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
-        binding.appBarMain.toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
@@ -74,9 +66,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Log.e("MainActivity", item.toString());
         Intent intent = new Intent(this, SettingsActivity.class);
         try {
-            startActivity(intent);
+            if ("Settings".equals(item.toString())) {
+                startActivity(intent);
+            }
         } catch (ActivityNotFoundException e) {
             Log.e("MainActivity", e.toString());
         }
