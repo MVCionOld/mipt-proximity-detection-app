@@ -78,9 +78,9 @@ public class ScannerService extends Service {
         }};
         ScanSettings scanSettings = new ScanSettings
                 .Builder()
-                .setScanMode(config.getScannerMode())
-                .setMatchMode(config.getMatchMode())
-                .setNumOfMatches(config.getNumOfMatches())
+                .setScanMode(config.getScannerMode().get())
+                .setMatchMode(config.getMatchMode().get())
+                .setNumOfMatches(config.getNumOfMatches().get())
                 .setCallbackType(config.getScanCallbackType())
                 .setReportDelay(config.getScanReportDelayMillis())
                 .build();
@@ -101,7 +101,7 @@ public class ScannerService extends Service {
             proximityResults = new ArrayList<>();
             nearbyDevices = new ConcurrentHashMap<>();
             final long startTime = System.nanoTime();
-            while (System.nanoTime() - startTime < config.getProcessingWindowNanos() && !Thread.currentThread().isInterrupted()) {
+            while (System.nanoTime() - startTime < config.getProcessingWindowNanos().get() && !Thread.currentThread().isInterrupted()) {
                 if (leDevicesStream.size() > 0) {
                     ScanResult scanResult = leDevicesStream.remove();
                     String deviceAddress = scanResult.getDevice().toString();
@@ -195,19 +195,19 @@ public class ScannerService extends Service {
 
     private void loadScannerServiceConfig(Intent intent) {
         config.setServiceId(new Random().nextInt());
-        config.setScannerMode(intent.getIntExtra(
+        config.getScannerMode().set(intent.getIntExtra(
                 "scannerMode",
                 DefaultPreferences.getScanModeValue()
         ));
-        config.setMatchMode(intent.getIntExtra(
+        config.getMatchMode().set(intent.getIntExtra(
                 "matchMode",
                 DefaultPreferences.getScanMatchModeValue()
         ));
-        config.setNumOfMatches(intent.getIntExtra(
+        config.getNumOfMatches().set(intent.getIntExtra(
                 "numOfMatches",
                 DefaultPreferences.getScanNumOfMatchesValue()
         ));
-        config.setProcessingWindowNanos(intent.getLongExtra(
+        config.getProcessingWindowNanos().set(intent.getLongExtra(
                 "processingWindowNanos",
                 DefaultPreferences.getScanProcessingWindowNanosValue()
         ));

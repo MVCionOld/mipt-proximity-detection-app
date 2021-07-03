@@ -60,8 +60,8 @@ public class AdvertiserService extends Service {
 
             AdvertiseSettings.Builder advertiseSettingsBuilder = new AdvertiseSettings
                     .Builder()
-                    .setAdvertiseMode(config.getAdvertiserMode())
-                    .setTxPowerLevel(config.getAdvertiserTxPower())
+                    .setAdvertiseMode(config.getAdvertiserMode().get())
+                    .setTxPowerLevel(config.getAdvertiserTxPower().get())
                     .setConnectable(config.isConnectable());
 
             bluetoothLeAdvertiser.startAdvertising(
@@ -84,11 +84,11 @@ public class AdvertiserService extends Service {
 
     private void loadAdvertiserServiceConfig(Intent intent) {
         config.setServiceId(new Random().nextInt());
-        config.setAdvertiserMode(intent.getIntExtra(
+        config.getAdvertiserMode().set(intent.getIntExtra(
                 "advertiserMode",
                 DefaultPreferences.getAdvertiseModeValue()
         ));
-        config.setAdvertiserTxPower(intent.getIntExtra(
+        config.getAdvertiserTxPower().set(intent.getIntExtra(
                 "advertiserTxPower",
                 DefaultPreferences.getAdvertiseTxPowerValue()
         ));

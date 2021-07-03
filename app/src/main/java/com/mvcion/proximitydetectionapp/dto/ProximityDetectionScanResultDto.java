@@ -36,7 +36,7 @@ public class ProximityDetectionScanResultDto {
     }
 
     public ProximityDetectionScanResultDto(ScannerServiceConfig config, String mac, LinkedList<ScanResult> scanResults) {
-        this.processingWindowMillis = (int) (config.getProcessingWindowNanos() / 1_000_000);
+        this.processingWindowMillis = (int) (config.getProcessingWindowNanos().get() / 1_000_000L);
         this.serviceId = config.getServiceId();
         this.mac = mac;
         name = scanResults.get(0).getDevice().getName();

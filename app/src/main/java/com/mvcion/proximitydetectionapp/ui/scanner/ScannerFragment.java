@@ -7,11 +7,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -20,42 +24,31 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.mvcion.proximitydetectionapp.common.preferences.DefaultPreferences;
+import com.mvcion.proximitydetectionapp.R;
 import com.mvcion.proximitydetectionapp.common.preferences.PreferencesFacade;
 import com.mvcion.proximitydetectionapp.common.service.ServiceTools;
 import com.mvcion.proximitydetectionapp.databinding.FragmentScannerBinding;
 import com.mvcion.proximitydetectionapp.services.ScannerService;
+import com.mvcion.proximitydetectionapp.services.config.ScannerServiceConfig;
 
 import java.text.MessageFormat;
 
+@SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
 public class ScannerFragment extends Fragment {
 
     private final String SCANNER_ITERATION_PATTERN = "Scanner iteration: {0}";
     private final String UNIQUE_DEVICES_TOTAL_PATTERN = "Unique devices total: {0}";
-    private final String UPDATE_FREQUENCY_PATTERN = "Update frequency: {0}{1}";
-    private int scannerMode = DefaultPreferences.getAdvertiseModeValue();
-    private int matchMode = DefaultPreferences.getScanMatchModeValue();
-    private int numOfMatches = DefaultPreferences.getScanNumOfMatchesValue();
-    private long processingWindowNanos = DefaultPreferences.getScanProcessingWindowNanosValue();
+
+    private ScannerServiceConfig config = new ScannerServiceConfig();
     private FragmentScannerBinding binding;
     private BroadcastReceiver receiver;
+
+    Thread fetchScannerPreferences;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        Log.d("ScannerFragment", MessageFormat.format("scannerMode: {0}", scannerMode));
-        Log.d("ScannerFragment", MessageFormat.format("matchMode: {0}", matchMode));
-        Log.d("ScannerFragment", MessageFormat.format("numOfMatches: {0}", numOfMatches));
-        Log.d("ScannerFragment", MessageFormat.format("processingWindowNanos: {0}", processingWindowNanos));
-
-        Thread fetchScannerPreferences = new Thread(() -> {
-            Context context = inflater.getContext();
-            scannerMode = PreferencesFacade.getScanMode(context);
-            matchMode = PreferencesFacade.getScanMatchMode(context);
-            numOfMatches = PreferencesFacade.getScanNumOfMatches(context);
-            processingWindowNanos = PreferencesFacade.getScanProcessingWindowNanos(context);
-        });
-        fetchScannerPreferences.start();
+        observeConfigChanges(inflater);
 
         ScannerViewModel scannerViewModel = new ViewModelProvider(this)
                 .get(ScannerViewModel.class);
@@ -93,7 +86,6 @@ public class ScannerFragment extends Fragment {
                     TextView scannerIterationTextView = binding.scannerTextViewScannerIteration;
                     TextView uniqueDevicesTotalTextView = binding.scannerTextViewUniqueDevices;
                     ListView devicesListView = binding.proximityDetectionListView;
-                    TextView updateFrequencyTextView = binding.scannerTextViewUpdateFrequency;
 
                     nearbyDevicesCounterTextView.setText(String.format("%d", devicesNearbyNum));
                     scannerIterationTextView.setText(MessageFormat.format(
@@ -101,10 +93,6 @@ public class ScannerFragment extends Fragment {
                     ));
                     uniqueDevicesTotalTextView.setText(MessageFormat.format(
                             UNIQUE_DEVICES_TOTAL_PATTERN, allUniqueDevicesNum
-                    ));
-                    updateFrequencyTextView.setText(MessageFormat.format(
-                            UPDATE_FREQUENCY_PATTERN,
-                            processingWindowNanos / 1_000_000_000.0, "s"
                     ));
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(
                             inflater.getContext(),
@@ -123,38 +111,25 @@ public class ScannerFragment extends Fragment {
                 requireActivity().registerReceiver(receiver, intentFilter);
                 progressBar.setVisibility(View.VISIBLE);
 
-                try {
-                    fetchScannerPreferences.join();
-                } catch (InterruptedException exception) {
-                    exception.printStackTrace();
-                }
+                Log.d("ScannerFragment", config.toString());
 
-                requireActivity()
-                        .startService(
-                                new Intent(getActivity(), ScannerService.class)
-                                        .putExtra("scannerMode", scannerMode)
-                                        .putExtra("matchMode", matchMode)
-                                        .putExtra("numOfMatches", numOfMatches)
-                                        .putExtra("processingWindowNanos", processingWindowNanos)
-                        );
+                requireActivity().startService(new Intent(getActivity(), ScannerService.class)
+                        .putExtra("scannerMode", config.getScannerMode().get())
+                        .putExtra("matchMode", config.getMatchMode().get())
+                        .putExtra("numOfMatches", config.getNumOfMatches().get())
+                        .putExtra("processingWindowNanos", config.getProcessingWindowNanos().get())
+                );
             } else {
                 requireActivity().unregisterReceiver(receiver);
 
                 progressBar.setVisibility(View.INVISIBLE);
 
-                requireActivity()
-                        .stopService(
-                                new Intent(
-                                        getActivity(),
-                                        ScannerService.class
-                                )
-                        );
+                requireActivity().stopService(new Intent(getActivity(), ScannerService.class));
 
                 TextView nearbyDevicesCounterTextView = binding.scannerTextViewNearbyDevicesCounter;
                 TextView scannerIterationTextView = binding.scannerTextViewScannerIteration;
                 TextView uniqueDevicesTotalTextView = binding.scannerTextViewUniqueDevices;
                 ListView devicesListView = binding.proximityDetectionListView;
-                TextView updateFrequencyTextView = binding.scannerTextViewUpdateFrequency;
 
                 nearbyDevicesCounterTextView.setText("0");
                 scannerIterationTextView.setText(MessageFormat.format(
@@ -162,9 +137,6 @@ public class ScannerFragment extends Fragment {
                 ));
                 uniqueDevicesTotalTextView.setText(MessageFormat.format(
                         UNIQUE_DEVICES_TOTAL_PATTERN, 0
-                ));
-                updateFrequencyTextView.setText(MessageFormat.format(
-                        UPDATE_FREQUENCY_PATTERN, "-", ""
                 ));
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(
                         inflater.getContext(),
@@ -175,15 +147,81 @@ public class ScannerFragment extends Fragment {
             }
         });
 
+        ImageView infoButton = binding.scannerImageViewInfo;
+        infoButton.setOnClickListener(new View.OnClickListener() {
+
+            boolean isOnTouchListenerSet = false;
+            boolean isPoppedUp = false;
+
+            @SuppressLint("InflateParams")
+            final View popupView = LayoutInflater.from(getActivity())
+                    .inflate(R.layout.popup_window_scanner, null);
+
+            final PopupWindow popupWindow = new PopupWindow(
+                    popupView,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT
+            );
+
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public void onClick(View v) {
+                if (!isOnTouchListenerSet) {
+                    popupView.setOnTouchListener((touchView, event) -> {
+                        popupWindow.dismiss();
+                        return true;
+                    });
+                    isOnTouchListenerSet = true;
+                }
+                isPoppedUp = !isPoppedUp;
+                if (isPoppedUp) {
+                    ((TextView)popupWindow.getContentView()
+                            .findViewById(R.id.scanner__popupwindow__textview)
+                    ).setText(config.toString());
+                    popupWindow.setElevation(20);
+                    popupWindow.showAtLocation(popupView, Gravity.BOTTOM, 0, 0);
+                } else {
+                    popupWindow.dismiss();
+                }
+            }
+        });
+
         return root;
     }
 
     @Override
     public void onDestroyView() {
+        super.onDestroyView();
+
         try {
             requireActivity().unregisterReceiver(receiver);
         } catch (IllegalArgumentException ignored) {}
-        super.onDestroyView();
+
         binding = null;
+        fetchScannerPreferences.interrupt();
+
+        try {
+            fetchScannerPreferences.join();
+        } catch (InterruptedException exception) {
+            Log.e("ScannerFragment", exception.toString());
+        }
+    }
+
+    private void observeConfigChanges(@NonNull LayoutInflater inflater) {
+        fetchScannerPreferences = new Thread(() -> {
+            try {
+                while (!Thread.currentThread().isInterrupted()) {
+                    Context context = inflater.getContext();
+                    config.getScannerMode().set(PreferencesFacade.getScanMode(context));
+                    config.getMatchMode().set(PreferencesFacade.getScanMatchMode(context));
+                    config.getNumOfMatches().set(PreferencesFacade.getScanNumOfMatches(context));
+                    config.getProcessingWindowNanos().set(PreferencesFacade.getScanProcessingWindowNanos(context));
+                    Thread.sleep(1_000L);
+                }
+            } catch (InterruptedException exception) {
+                Log.e("ScannerFragment", exception.toString());
+            }
+        });
+        fetchScannerPreferences.start();
     }
 }

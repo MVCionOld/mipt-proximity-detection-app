@@ -23,14 +23,14 @@ import com.mvcion.proximitydetectionapp.databinding.FragmentHistoryBinding;
 import java.text.MessageFormat;
 
 @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
-public class HistoryFragment extends Fragment {  // TODO: make db request async
+public class HistoryFragment extends Fragment {
 
     private final String ROWS_COUNT_PATTERN = "Rows count: {0}";
 
     private FragmentHistoryBinding binding;
 
     private void setProximityDetectionHistoryList(@NonNull LayoutInflater inflater) {
-        String[] proximityInfos = new String[0];
+        String[] proximityInfo = new String[0];
         {
             DBHelper dbHelper = new DBHelper(inflater.getContext());
             SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -41,10 +41,10 @@ public class HistoryFragment extends Fragment {  // TODO: make db request async
                     MessageFormat.format("{0} DESC", DBHelper.SCANNED_RECORDS_FIELD_ID)
             );
             if (cursor.moveToFirst()) {
-                int i = 0;
-                proximityInfos = new String[cursor.getCount()];
+                int it = 0;
+                proximityInfo = new String[cursor.getCount()];
                 do {
-                    proximityInfos[i++] = ProximityDetectionScanResultDao.getDto(cursor).toString();
+                    proximityInfo[it++] = ProximityDetectionScanResultDao.getDto(cursor).toString();
                 } while (cursor.moveToNext());
             } else {
                 Log.e("HistoryFragment", "0 rows");
@@ -54,14 +54,14 @@ public class HistoryFragment extends Fragment {  // TODO: make db request async
 
         TextView nearbyDevicesCounterTextView = binding.historyTextViewHistorySize;
         nearbyDevicesCounterTextView.setText(MessageFormat.format(
-                ROWS_COUNT_PATTERN, proximityInfos.length
+                ROWS_COUNT_PATTERN, proximityInfo.length
         ));
 
         ListView devicesListView = binding.proximityDetectionHistoryListView;
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 inflater.getContext(),
                 android.R.layout.simple_list_item_1,
-                proximityInfos
+                proximityInfo
         );
         devicesListView.setAdapter(adapter);
     }
