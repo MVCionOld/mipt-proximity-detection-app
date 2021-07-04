@@ -8,19 +8,19 @@ import android.bluetooth.le.AdvertiseSettings;
 import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.content.Intent;
 import android.os.IBinder;
-import android.os.ParcelUuid;
 import android.util.Log;
 
-import com.mvcion.proximitydetectionapp.common.preferences.PreferencesFacade;
+import com.mvcion.proximitydetectionapp.common.preferences.DefaultPreferences;
 import com.mvcion.proximitydetectionapp.common.service.ServiceUuis;
+import com.mvcion.proximitydetectionapp.services.config.AdvertiserServiceConfig;
+
+import java.util.Random;
 
 @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
 public class AdvertiserService extends Service {
     private static final String TAG = "AdvertiserService";
 
-    private int advertiserMode;
-    private int advertiserTxPower;
-    private boolean isConnectable;
+    private AdvertiserServiceConfig config = new AdvertiserServiceConfig();
 
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothLeAdvertiser bluetoothLeAdvertiser;
@@ -52,18 +52,17 @@ public class AdvertiserService extends Service {
                 return;
             }
 
-            ParcelUuid serviceUuid = ServiceUuis.getServiceUuid();
             AdvertiseData.Builder advertiseDataBuilder = new AdvertiseData
                     .Builder()
-                    .addServiceUuid(serviceUuid)
-                    .setIncludeDeviceName(true)
-                    .setIncludeTxPowerLevel(true);
+                    .addServiceUuid(ServiceUuis.getServiceUuid())
+                    .setIncludeDeviceName(config.isIncludeDeviceName())
+                    .setIncludeTxPowerLevel(config.isIncludeTxPowerLevel());
 
             AdvertiseSettings.Builder advertiseSettingsBuilder = new AdvertiseSettings
                     .Builder()
-                    .setAdvertiseMode(advertiserMode)
-                    .setTxPowerLevel(advertiserTxPower)
-                    .setConnectable(isConnectable);
+                    .setAdvertiseMode(config.getAdvertiserMode().get())
+                    .setTxPowerLevel(config.getAdvertiserTxPower().get())
+                    .setConnectable(config.isConnectable());
 
             bluetoothLeAdvertiser.startAdvertising(
                     /*settings = */advertiseSettingsBuilder.build(),
@@ -83,19 +82,23 @@ public class AdvertiserService extends Service {
         Log.d(TAG, "onCreate");
     }
 
+    private void loadAdvertiserServiceConfig(Intent intent) {
+        config.setServiceId(new Random().nextInt());
+        config.getAdvertiserMode().set(intent.getIntExtra(
+                "advertiserMode",
+                DefaultPreferences.getAdvertiseModeValue()
+        ));
+        config.getAdvertiserTxPower().set(intent.getIntExtra(
+                "advertiserTxPower",
+                DefaultPreferences.getAdvertiseTxPowerValue()
+        ));
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
 
-        advertiserMode = intent.getIntExtra(
-                "advertiserMode", PreferencesFacade.DEFAULT_ADVERTISER_MODE_VALUE
-        );
-        advertiserTxPower = intent.getIntExtra(
-                "advertiserTxPower", PreferencesFacade.DEFAULT_ADVERTISER_TX_POWER_VALUE
-        );
-        isConnectable = intent.getBooleanExtra(
-                "isConnectable", PreferencesFacade.DEFAULT_ADVERTISER_IS_CONNECTABLE_VALUE
-        );
+        loadAdvertiserServiceConfig(intent);
 
         if (bluetoothAdapter == null) {
             Log.e(TAG, "BluetoothAdapter is not found.");
@@ -116,8 +119,8 @@ public class AdvertiserService extends Service {
         if (scanAdvertiser != null) {
             try {
                 scanAdvertiser.join();
-            } catch (InterruptedException exception) {
-                exception.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
         if (bluetoothLeAdvertiser != null) {

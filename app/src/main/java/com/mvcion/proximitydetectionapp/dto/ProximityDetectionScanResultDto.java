@@ -3,6 +3,8 @@ package com.mvcion.proximitydetectionapp.dto;
 import android.bluetooth.le.ScanResult;
 import android.os.Build;
 
+import com.mvcion.proximitydetectionapp.services.config.ScannerServiceConfig;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.text.MessageFormat;
@@ -28,12 +30,14 @@ public class ProximityDetectionScanResultDto {
     private int maxTxPower;
     private double avgTxPower;
     private int counter;
+    private int processingWindowMillis;
 
     public ProximityDetectionScanResultDto() {
     }
 
-    public ProximityDetectionScanResultDto(int serviceId, String mac, LinkedList<ScanResult> scanResults) {
-        this.serviceId = serviceId;
+    public ProximityDetectionScanResultDto(ScannerServiceConfig config, String mac, LinkedList<ScanResult> scanResults) {
+        this.processingWindowMillis = (int) (config.getProcessingWindowNanos().get() / 1_000_000L);
+        this.serviceId = config.getServiceId();
         this.mac = mac;
         name = scanResults.get(0).getDevice().getName();
         processedDttm = String.format(
@@ -47,7 +51,7 @@ public class ProximityDetectionScanResultDto {
         maxTxPower = Integer.MIN_VALUE;
         avgTxPower = 0;
         counter = scanResults.size();
-        for (ScanResult scanResult: scanResults) {
+        for (ScanResult scanResult : scanResults) {
             minRssi = Math.min(minRssi, scanResult.getRssi());
             maxRssi = Math.max(maxRssi, scanResult.getRssi());
             avgRssi += scanResult.getRssi();
@@ -69,7 +73,7 @@ public class ProximityDetectionScanResultDto {
         if (minTxPower < 127) {
             return MessageFormat.format(
                     "Device: {0}\nname: {9}\nservice id: {10}\nprocessed datetime: {8}"
-                    + "\nRSSI: {3} in [{1}; {2}]\nTxPower: {6} in [{4}; {5}]\ncounter: {7}",
+                            + "\nRSSI: {3} in [{1}; {2}]\nTxPower: {6} in [{4}; {5}]\ncounter: {7}",
                     mac, minRssi, maxRssi, avgRssi,
                     minTxPower, maxTxPower, avgTxPower,
                     counter, processedDttm, name, serviceId
@@ -77,7 +81,7 @@ public class ProximityDetectionScanResultDto {
         } else {
             return MessageFormat.format(
                     "Device: {0}\nname: {6}\nservice id: {7}\nprocessed datetime: {5}"
-                    + "\nRSSI: {3} in [{1}; {2}]\ncounter: {4}",
+                            + "\nRSSI: {3} in [{1}; {2}]\ncounter: {4}",
                     mac, minRssi, maxRssi, avgRssi,
                     counter, processedDttm, name, serviceId
             );

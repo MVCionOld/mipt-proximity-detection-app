@@ -21,6 +21,19 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="12dp"/>
 
+    <ImageView
+        android:id="@+id/advertiser__image_view__info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="12sp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
+        android:src="@drawable/outline_help_outline_24"
+        android:contentDescription="@string/info" />
+
     <LinearLayout
         android:gravity="center"
         android:orientation="vertical"

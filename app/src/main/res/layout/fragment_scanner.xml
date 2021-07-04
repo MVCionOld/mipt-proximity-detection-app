@@ -3,7 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.scanner.ScannerFragment">
+
+    <ImageView
+        android:id="@+id/scanner__image_view__info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/outline_help_outline_24"
+        android:contentDescription="@string/info" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -50,14 +60,6 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/scanner__text_view__unique_devices"
                     android:text="@string/unique_devices_total_0"
-                    android:textSize="17sp"
-                    />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/scanner__text_view__update_frequency"
-                    android:text="@string/update_frequency"
                     android:textSize="17sp"
                     />
 

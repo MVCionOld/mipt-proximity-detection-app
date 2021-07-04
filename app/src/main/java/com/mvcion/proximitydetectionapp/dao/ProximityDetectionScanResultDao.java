@@ -3,7 +3,7 @@ package com.mvcion.proximitydetectionapp.dao;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.mvcion.proximitydetectionapp.common.db.DBHelper;
+import com.mvcion.proximitydetectionapp.db.DBHelper;
 import com.mvcion.proximitydetectionapp.dto.ProximityDetectionScanResultDto;
 
 public class ProximityDetectionScanResultDao {
@@ -11,79 +11,57 @@ public class ProximityDetectionScanResultDao {
         ProximityDetectionScanResultDto result = new ProximityDetectionScanResultDto();
         result.setServiceId(
                 cursor.getInt(
-                        cursor.getColumnIndex(
-                                DBHelper.SCANNED_RECORDS_FIELD_SERVICE_ID
-                        )
+                        cursor.getColumnIndex(DBHelper.SCANNED_RECORDS_FIELD_SERVICE_ID)
                 )
         );
         result.setMac(
                 cursor.getString(
-                        cursor.getColumnIndex(
-                                DBHelper.SCANNED_RECORDS_FIELD_DEVICE_MAC
-                        )
+                        cursor.getColumnIndex(DBHelper.SCANNED_RECORDS_FIELD_DEVICE_MAC)
                 )
         );
         result.setName(
                 cursor.getString(
-                        cursor.getColumnIndex(
-                                DBHelper.SCANNED_RECORDS_FIELD_DEVICE_NAME
-                        )
+                        cursor.getColumnIndex(DBHelper.SCANNED_RECORDS_FIELD_DEVICE_NAME)
                 )
         );
         result.setProcessedDttm(
                 cursor.getString(
-                        cursor.getColumnIndex(
-                                DBHelper.SCANNED_RECORDS_FIELD_PROCESSED_DTTM
-                        )
+                        cursor.getColumnIndex(DBHelper.SCANNED_RECORDS_FIELD_PROCESSED_DTTM)
                 )
         );
         result.setMinRssi(
                 cursor.getInt(
-                        cursor.getColumnIndex(
-                                DBHelper.SCANNED_RECORDS_FIELD_MIN_RSSI
-                        )
+                        cursor.getColumnIndex(DBHelper.SCANNED_RECORDS_FIELD_MIN_RSSI)
                 )
         );
         result.setMaxRssi(
                 cursor.getInt(
-                        cursor.getColumnIndex(
-                                DBHelper.SCANNED_RECORDS_FIELD_MAX_RSSI
-                        )
+                        cursor.getColumnIndex(DBHelper.SCANNED_RECORDS_FIELD_MAX_RSSI)
                 )
         );
         result.setAvgRssi(
                 cursor.getDouble(
-                        cursor.getColumnIndex(
-                                DBHelper.SCANNED_RECORDS_FIELD_AVG_RSSI
-                        )
+                        cursor.getColumnIndex(DBHelper.SCANNED_RECORDS_FIELD_AVG_RSSI)
                 )
         );
         result.setMinTxPower(
                 cursor.getInt(
-                        cursor.getColumnIndex(
-                                DBHelper.SCANNED_RECORDS_FIELD_MIN_TXPOWER
-                        )
+                        cursor.getColumnIndex(DBHelper.SCANNED_RECORDS_FIELD_MIN_TXPOWER)
                 )
         );
         result.setMaxTxPower(
                 cursor.getInt(
-                        cursor.getColumnIndex(
-                                DBHelper.SCANNED_RECORDS_FIELD_MAX_TXPOWER
-                        )
+                        cursor.getColumnIndex(DBHelper.SCANNED_RECORDS_FIELD_MAX_TXPOWER)
                 )
         );
         result.setAvgTxPower(
                 cursor.getDouble(
-                        cursor.getColumnIndex(
-                                DBHelper.SCANNED_RECORDS_FIELD_AVG_TXPOWER
-                        )
+                        cursor.getColumnIndex(DBHelper.SCANNED_RECORDS_FIELD_AVG_TXPOWER)
                 )
         );
         result.setCounter(
                 cursor.getInt(
-                        cursor.getColumnIndex(
-                                DBHelper.SCANNED_RECORDS_FIELD_COUNTER
-                        )
+                        cursor.getColumnIndex(DBHelper.SCANNED_RECORDS_FIELD_COUNTER)
                 )
         );
         return result;
@@ -135,10 +113,9 @@ public class ProximityDetectionScanResultDao {
                 DBHelper.SCANNED_RECORDS_FIELD_COUNTER,
                 result.getCounter()
         );
-        // TODO: пофиксить хардкод
         contentValues.put(
                 DBHelper.SCANNED_RECORDS_FIELD_PROCESSING_WINDOW_MILLIS,
-                5000
+                result.getProcessingWindowMillis()
         );
         return contentValues;
     }
